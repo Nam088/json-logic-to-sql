@@ -1,0 +1,52 @@
+# Source files (only ship compiled dist/)
+src/
+*.ts
+!*.d.ts
+
+# Tests
+**/__tests__/
+**/*.spec.ts
+**/*.test.ts
+jest.config.js
+coverage/
+
+# Development files
+.vscode/
+.idea/
+*.log
+*.tgz
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Documentation (keep README.md)
+docs/
+
+# Config files
+tsconfig.json
+.eslintrc*
+.prettierrc*
+.editorconfig
+
+# Docker
+docker-compose.yml
+Dockerfile
+.dockerignore
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Environment
+.env*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+*.sql
+

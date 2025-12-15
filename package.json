@@ -1,12 +1,13 @@
 {
-  "name": "json-logic-to-sql",
+  "name": "@nam088/json-logic-to-sql",
   "version": "1.0.0",
-  "description": "Convert JSON Logic rules to SQL WHERE clauses",
+  "description": "A powerful, secure, and type-safe library to convert JSON Logic rules into SQL WHERE clauses with comprehensive schema validation and multi-dialect support",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/index.js",
+      "require": "./dist/index.js",
       "types": "./dist/index.d.ts"
     }
   },
@@ -23,15 +24,37 @@
     "sql",
     "query-builder",
     "filter",
-    "postgresql"
+    "postgresql",
+    "mysql",
+    "mssql",
+    "sqlite",
+    "schema-validation",
+    "sql-injection-prevention",
+    "parameterized-queries",
+    "typescript",
+    "where-clause",
+    "sql-compiler"
   ],
-  "author": "",
+  "author": "nam088",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nam088/json-logic-to-sql.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nam088/json-logic-to-sql/issues"
+  },
+  "homepage": "https://github.com/nam088/json-logic-to-sql#readme",
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
     "@types/jest": "^29.5.0",
+    "@types/mysql": "^2.15.27",
     "@types/node": "^20.0.0",
     "@types/pg": "^8.16.0",
+    "better-sqlite3": "^12.5.0",
     "jest": "^29.7.0",
+    "mssql": "^12.2.0",
+    "mysql2": "^3.15.3",
     "pg": "^8.16.3",
     "ts-jest": "^29.1.0",
     "typescript": "^5.3.0"
@@ -40,6 +63,8 @@
     "node": ">=18.0.0"
   },
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE"
   ]
 }

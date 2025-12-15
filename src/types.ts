@@ -44,6 +44,8 @@ export interface CompilerConfig {
   maxConditions?: number;
   /** Parameter style (default: 'positional') */
   paramStyle?: 'positional' | 'named';
+  /** Target SQL dialect (default: 'postgresql') */
+  dialect?: 'postgresql' | 'mysql' | 'mssql' | 'sqlite';
   /** Lookup resolvers for remote options */
   lookups?: LookupRegistry;
 }
@@ -121,6 +123,7 @@ export type FieldType =
   | 'timestamp'
   | 'uuid'
   | 'array'
+  | 'json'
   | 'jsonb';
 
 // ============================================

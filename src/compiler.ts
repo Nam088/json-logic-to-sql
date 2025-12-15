@@ -17,6 +17,12 @@ import { handleComparison, handleBetween, handleNullCheck } from './operators/co
 import { handleString } from './operators/string';
 import { handleArray } from './operators/array';
 
+import { Dialect } from './dialects/type';
+import { PostgresDialect } from './dialects/postgresql';
+import { MysqlDialect } from './dialects/mysql';
+import { MssqlDialect } from './dialects/mssql';
+import { SqliteDialect } from './dialects/sqlite';
+
 export class CompilerError extends Error {
   constructor(message: string) {
     super(message);
@@ -29,12 +35,30 @@ export class JsonLogicCompiler {
   private maxDepth: number;
   private maxConditions: number;
   private paramStyle: 'positional' | 'named';
+  private dialect: Dialect;
 
   constructor(private config: CompilerConfig) {
     this.validator = new SchemaValidator(config.schema);
     this.maxDepth = config.maxDepth ?? config.schema.settings?.maxDepth ?? 5;
     this.maxConditions = config.maxConditions ?? config.schema.settings?.maxConditions ?? 100;
     this.paramStyle = config.paramStyle ?? config.schema.settings?.paramStyle ?? 'positional';
+
+    // Initialize dialect
+    switch (config.dialect) {
+      case 'mysql':
+        this.dialect = new MysqlDialect();
+        break;
+      case 'mssql':
+        this.dialect = new MssqlDialect();
+        break;
+      case 'sqlite':
+        this.dialect = new SqliteDialect();
+        break;
+      case 'postgresql':
+      default:
+        this.dialect = new PostgresDialect();
+        break;
+    }
   }
 
   /**
@@ -217,7 +241,7 @@ export class JsonLogicCompiler {
 
     // Handle based on operator type
     if (UNARY_OPERATORS.includes(operator)) {
-      return handleNullCheck(operator, column);
+      return this.dialect.handleNullCheck(operator, column);
     }
 
     if (RANGE_OPERATORS.includes(operator)) {
@@ -225,38 +249,44 @@ export class JsonLogicCompiler {
         throw new CompilerError(`${operator} requires two values`);
       }
       this.validator.validateValue(fieldName, operator, value2);
-      return handleBetween(operator, column, [value, value2], context);
+      return this.dialect.handleBetween(operator, column, [value, value2], context);
     }
 
     if (ARRAY_OPERATORS.includes(operator)) {
       if (!Array.isArray(value)) {
         throw new CompilerError(`${operator} requires array value`);
       }
-      return handleArray(operator, column, value, context);
+      return this.dialect.handleArray(operator, column, value, context);
     }
 
-    // Any of array column operators: value = ANY(column), value <> ALL(column)
+    // Any of array column operators
     if (['any_of', 'not_any_of'].includes(operator)) {
-      const paramName = context.paramIndex.toString();
-      context.paramIndex++;
-      const sqlOp = operator === 'any_of' ? '= ANY' : '<> ALL';
-      return {
-        sql: `$${paramName} ${sqlOp}(${column})`,
-        params: { [`$${paramName}`]: value },
-      };
+      return this.dialect.handleAnyOf(operator, column, value, context);
     }
 
     // String operators
     if (['like', 'ilike', 'starts_with', 'ends_with', 'contains', 'regex'].includes(operator)) {
+      // Special handling for 'contains' which can be Array or String
+      if (operator === 'contains' && (fieldSchema.type === 'array' || fieldSchema.type === 'jsonb')) {
+         if (!Array.isArray(value)) {
+            // It might be a single value check? e.g. tags contains 'a'
+            // But Postgres @> expects array.
+            // If user passed a single value, we could wrap it?
+            // Strict mode: expect array.
+            throw new CompilerError(`Array 'contains' requires array value`); 
+         }
+         return this.dialect.handleArray(operator, column, value, context);
+      }
+
       if (typeof value !== 'string') {
         throw new CompilerError(`${operator} requires string value`);
       }
       const caseSensitive = fieldSchema.caseSensitive ?? false;
-      return handleString(operator, column, value, context, caseSensitive);
+      return this.dialect.handleString(operator, column, value, context, caseSensitive);
     }
 
     // Comparison operators
-    return handleComparison(operator, column, value, context);
+    return this.dialect.handleComparison(operator, column, value, context);
   }
 
   private isVar(value: unknown): value is JsonLogicVar {
@@ -308,7 +338,11 @@ export class JsonLogicCompiler {
 
     // Regular column
     const columnName = regularField.column ?? fieldName;
-    let column = escapeIdentifier(columnName);
+    
+    // Split by dot and quote each part using dialect
+    let column = columnName.split('.')
+      .map(part => this.dialect.quoteIdentifier(part))
+      .join('.');
 
     // Apply input transforms
     if (regularField.transform?.input) {
