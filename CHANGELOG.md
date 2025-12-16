@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/Nam088/json-logic-to-sql/compare/v1.0.2...v1.1.0) (2025-12-16)
+
+
+### Features
+
+* Re-architect operator handling into dialects, enhance security, and improve null and array operator behavior. ([7303f51](https://github.com/Nam088/json-logic-to-sql/commit/7303f51586f090e76a8abbb9b1431b6f3c30ed95))
+
 ## [1.0.2](https://github.com/Nam088/json-logic-to-sql/compare/v1.0.1...v1.0.2) (2025-12-16)
 
 
