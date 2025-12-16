@@ -2,18 +2,27 @@
  * Security utilities for preventing SQL injection and other attacks
  */
 
-const DANGEROUS_KEYS = ['__proto__', 'constructor', 'prototype'];
+const DANGEROUS_KEYS = ['__proto__'];
 
 /**
  * Sanitize input to prevent prototype pollution
  */
-export function sanitizeInput(input: unknown): unknown {
+export function sanitizeInput(input: unknown, visited = new WeakSet<object>()): unknown {
   if (input === null || input === undefined) {
     return input;
   }
 
+  if (typeof input === 'object') {
+    if (visited.has(input)) {
+      throw new Error('Circular reference detected');
+    }
+    visited.add(input);
+  }
+
   if (Array.isArray(input)) {
-    return input.map(sanitizeInput);
+    const result = input.map(item => sanitizeInput(item, visited));
+    visited.delete(input);
+    return result;
   }
 
   if (typeof input === 'object') {
@@ -22,8 +31,9 @@ export function sanitizeInput(input: unknown): unknown {
       if (DANGEROUS_KEYS.includes(key)) {
         continue; // Skip dangerous keys
       }
-      result[key] = sanitizeInput((input as Record<string, unknown>)[key]);
+      result[key] = sanitizeInput((input as Record<string, unknown>)[key], visited);
     }
+    visited.delete(input); // Allow revisiting in siblings (DAG)
     return result;
   }
 

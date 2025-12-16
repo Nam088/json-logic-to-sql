@@ -1,0 +1,13 @@
+{
+  "name": "json-logic-to-sql-example",
+  "version": "1.0.0",
+  "description": "Example usage of @nam088/json-logic-to-sql",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@nam088/json-logic-to-sql": "^1.0.0"
+  }
+}
+

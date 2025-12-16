@@ -1,7 +1,5 @@
 import { handleAnd, handleOr, handleNot } from '../operators/logical';
-import { handleComparison, handleBetween, handleNullCheck } from '../operators/comparison';
-import { handleString } from '../operators/string';
-import { handleArray } from '../operators/array';
+import { PostgresDialect } from '../dialects/postgresql';
 import type { CompilerContext } from '../types';
 
 describe('Operators', () => {
@@ -11,6 +9,8 @@ describe('Operators', () => {
     paramIndex: 1,
     params: {},
   });
+
+  const dialect = new PostgresDialect();
 
   describe('Logical Operators', () => {
     describe('handleAnd', () => {
@@ -65,7 +65,7 @@ describe('Operators', () => {
     describe('handleComparison', () => {
       it('should handle eq operator', () => {
         const ctx = createContext();
-        const result = handleComparison('eq', '"name"', 'John', ctx);
+        const result = dialect.handleComparison('eq', '"name"', 'John', ctx);
         expect(result.sql).toBe('"name" = $1');
         expect(result.params).toEqual({ '$1': 'John' });
         expect(ctx.paramIndex).toBe(2);
@@ -73,31 +73,31 @@ describe('Operators', () => {
 
       it('should handle ne operator', () => {
         const ctx = createContext();
-        const result = handleComparison('ne', '"status"', 'deleted', ctx);
+        const result = dialect.handleComparison('ne', '"status"', 'deleted', ctx);
         expect(result.sql).toBe('"status" <> $1');
       });
 
       it('should handle gt operator', () => {
         const ctx = createContext();
-        const result = handleComparison('gt', '"age"', 18, ctx);
+        const result = dialect.handleComparison('gt', '"age"', 18, ctx);
         expect(result.sql).toBe('"age" > $1');
       });
 
       it('should handle gte operator', () => {
         const ctx = createContext();
-        const result = handleComparison('gte', '"age"', 21, ctx);
+        const result = dialect.handleComparison('gte', '"age"', 21, ctx);
         expect(result.sql).toBe('"age" >= $1');
       });
 
       it('should handle lt operator', () => {
         const ctx = createContext();
-        const result = handleComparison('lt', '"age"', 65, ctx);
+        const result = dialect.handleComparison('lt', '"age"', 65, ctx);
         expect(result.sql).toBe('"age" < $1');
       });
 
       it('should handle lte operator', () => {
         const ctx = createContext();
-        const result = handleComparison('lte', '"price"', 100, ctx);
+        const result = dialect.handleComparison('lte', '"price"', 100, ctx);
         expect(result.sql).toBe('"price" <= $1');
       });
     });
@@ -105,27 +105,27 @@ describe('Operators', () => {
     describe('handleBetween', () => {
       it('should handle between operator', () => {
         const ctx = createContext();
-        const result = handleBetween('between', '"age"', [18, 65], ctx);
+        const result = dialect.handleBetween('between', '"age"', [18, 65], ctx);
         expect(result.sql).toBe('"age" BETWEEN $1 AND $2');
         expect(result.params).toEqual({ '$1': 18, '$2': 65 });
       });
 
       it('should handle not_between operator', () => {
         const ctx = createContext();
-        const result = handleBetween('not_between', '"price"', [0, 10], ctx);
+        const result = dialect.handleBetween('not_between', '"price"', [0, 10], ctx);
         expect(result.sql).toBe('"price" NOT BETWEEN $1 AND $2');
       });
     });
 
     describe('handleNullCheck', () => {
       it('should handle is_null operator', () => {
-        const result = handleNullCheck('is_null', '"deleted_at"');
+        const result = dialect.handleNullCheck('is_null', '"deleted_at"');
         expect(result.sql).toBe('"deleted_at" IS NULL');
         expect(result.params).toEqual({});
       });
 
       it('should handle is_not_null operator', () => {
-        const result = handleNullCheck('is_not_null', '"verified_at"');
+        const result = dialect.handleNullCheck('is_not_null', '"verified_at"');
         expect(result.sql).toBe('"verified_at" IS NOT NULL');
       });
     });
@@ -135,59 +135,59 @@ describe('Operators', () => {
     describe('handleString', () => {
       it('should handle contains (case insensitive)', () => {
         const ctx = createContext();
-        const result = handleString('contains', '"name"', 'john', ctx, false);
+        const result = dialect.handleString('contains', '"name"', 'john', ctx, false);
         expect(result.sql).toBe('"name" ILIKE $1');
         expect(result.params).toEqual({ '$1': '%john%' });
       });
 
       it('should handle contains (case sensitive)', () => {
         const ctx = createContext();
-        const result = handleString('contains', '"name"', 'John', ctx, true);
+        const result = dialect.handleString('contains', '"name"', 'John', ctx, true);
         expect(result.sql).toBe('"name" LIKE $1');
         expect(result.params).toEqual({ '$1': '%John%' });
       });
 
       it('should handle starts_with', () => {
         const ctx = createContext();
-        const result = handleString('starts_with', '"code"', 'ABC', ctx, false);
+        const result = dialect.handleString('starts_with', '"code"', 'ABC', ctx, false);
         expect(result.sql).toBe('"code" ILIKE $1');
         expect(result.params).toEqual({ '$1': 'ABC%' });
       });
 
       it('should handle ends_with', () => {
         const ctx = createContext();
-        const result = handleString('ends_with', '"email"', '@gmail.com', ctx, false);
+        const result = dialect.handleString('ends_with', '"email"', '@gmail.com', ctx, false);
         expect(result.sql).toBe('"email" ILIKE $1');
         expect(result.params).toEqual({ '$1': '%@gmail.com' });
       });
 
       it('should handle like operator', () => {
         const ctx = createContext();
-        const result = handleString('like', '"name"', '%test%', ctx, false);
+        const result = dialect.handleString('like', '"name"', '%test%', ctx, false);
         expect(result.sql).toBe('"name" LIKE $1');
       });
 
       it('should handle ilike operator', () => {
         const ctx = createContext();
-        const result = handleString('ilike', '"name"', '%test%', ctx, false);
+        const result = dialect.handleString('ilike', '"name"', '%test%', ctx, false);
         expect(result.sql).toBe('"name" ILIKE $1');
       });
 
       it('should handle regex (case insensitive)', () => {
         const ctx = createContext();
-        const result = handleString('regex', '"code"', '^[A-Z]+$', ctx, false);
+        const result = dialect.handleString('regex', '"code"', '^[A-Z]+$', ctx, false);
         expect(result.sql).toBe('"code" ~* $1');
       });
 
       it('should handle regex (case sensitive)', () => {
         const ctx = createContext();
-        const result = handleString('regex', '"code"', '^[A-Z]+$', ctx, true);
+        const result = dialect.handleString('regex', '"code"', '^[A-Z]+$', ctx, true);
         expect(result.sql).toBe('"code" ~ $1');
       });
 
       it('should escape LIKE special characters in contains', () => {
         const ctx = createContext();
-        const result = handleString('contains', '"name"', '50%_off', ctx, false);
+        const result = dialect.handleString('contains', '"name"', '50%_off', ctx, false);
         expect(result.params).toEqual({ '$1': '%50\\%\\_off%' });
       });
     });
@@ -197,26 +197,26 @@ describe('Operators', () => {
     describe('handleArray - IN', () => {
       it('should handle in operator', () => {
         const ctx = createContext();
-        const result = handleArray('in', '"status"', ['a', 'b', 'c'], ctx);
+        const result = dialect.handleArray('in', '"status"', ['a', 'b', 'c'], ctx);
         expect(result.sql).toBe('"status" IN ($1, $2, $3)');
         expect(result.params).toEqual({ '$1': 'a', '$2': 'b', '$3': 'c' });
       });
 
       it('should return 1=0 for empty in array', () => {
         const ctx = createContext();
-        const result = handleArray('in', '"status"', [], ctx);
+        const result = dialect.handleArray('in', '"status"', [], ctx);
         expect(result.sql).toBe('1=0');
       });
 
       it('should handle not_in operator', () => {
         const ctx = createContext();
-        const result = handleArray('not_in', '"id"', [1, 2], ctx);
+        const result = dialect.handleArray('not_in', '"id"', [1, 2], ctx);
         expect(result.sql).toBe('"id" NOT IN ($1, $2)');
       });
 
       it('should return 1=1 for empty not_in array', () => {
         const ctx = createContext();
-        const result = handleArray('not_in', '"id"', [], ctx);
+        const result = dialect.handleArray('not_in', '"id"', [], ctx);
         expect(result.sql).toBe('1=1');
       });
     });
@@ -224,20 +224,20 @@ describe('Operators', () => {
     describe('handleArray - PostgreSQL Arrays', () => {
       it('should handle contains (@>)', () => {
         const ctx = createContext();
-        const result = handleArray('contains', '"tags"', ['a', 'b'], ctx);
+        const result = dialect.handleArray('contains', '"tags"', ['a', 'b'], ctx);
         expect(result.sql).toBe('"tags" @> $1');
         expect(result.params).toEqual({ '$1': ['a', 'b'] });
       });
 
       it('should handle contained_by (<@)', () => {
         const ctx = createContext();
-        const result = handleArray('contained_by', '"tags"', ['a', 'b', 'c'], ctx);
+        const result = dialect.handleArray('contained_by', '"tags"', ['a', 'b', 'c'], ctx);
         expect(result.sql).toBe('"tags" <@ $1');
       });
 
       it('should handle overlaps (&&)', () => {
         const ctx = createContext();
-        const result = handleArray('overlaps', '"tags"', ['x', 'y'], ctx);
+        const result = dialect.handleArray('overlaps', '"tags"', ['x', 'y'], ctx);
         expect(result.sql).toBe('"tags" && $1');
       });
     });

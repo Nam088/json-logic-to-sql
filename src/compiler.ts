@@ -10,18 +10,11 @@ import type {
 } from './types';
 import { applyTransforms } from './utils/transforms';
 import { SchemaValidator, SchemaValidationError } from './schema/validator';
-import { sanitizeInput, escapeIdentifier } from './security/sanitizer';
+import { sanitizeInput, escapeIdentifier, validateParameterValue } from './security/sanitizer';
 import { JSON_LOGIC_TO_OPERATOR, UNARY_OPERATORS, RANGE_OPERATORS, ARRAY_OPERATORS } from './operators/index';
 import { handleAnd, handleOr, handleNot } from './operators/logical';
-import { handleComparison, handleBetween, handleNullCheck } from './operators/comparison';
-import { handleString } from './operators/string';
-import { handleArray } from './operators/array';
-
 import { Dialect } from './dialects/type';
-import { PostgresDialect } from './dialects/postgresql';
-import { MysqlDialect } from './dialects/mysql';
-import { MssqlDialect } from './dialects/mssql';
-import { SqliteDialect } from './dialects/sqlite';
+import { createDialect } from './dialects/factory';
 
 export class CompilerError extends Error {
   constructor(message: string) {
@@ -37,27 +30,17 @@ export class JsonLogicCompiler {
   private paramStyle: 'positional' | 'named';
   private dialect: Dialect;
 
-  constructor(private config: CompilerConfig) {
+  constructor(private config: CompilerConfig, dialect?: Dialect) {
     this.validator = new SchemaValidator(config.schema);
     this.maxDepth = config.maxDepth ?? config.schema.settings?.maxDepth ?? 5;
     this.maxConditions = config.maxConditions ?? config.schema.settings?.maxConditions ?? 100;
     this.paramStyle = config.paramStyle ?? config.schema.settings?.paramStyle ?? 'positional';
 
     // Initialize dialect
-    switch (config.dialect) {
-      case 'mysql':
-        this.dialect = new MysqlDialect();
-        break;
-      case 'mssql':
-        this.dialect = new MssqlDialect();
-        break;
-      case 'sqlite':
-        this.dialect = new SqliteDialect();
-        break;
-      case 'postgresql':
-      default:
-        this.dialect = new PostgresDialect();
-        break;
+    if (dialect) {
+      this.dialect = dialect;
+    } else {
+      this.dialect = createDialect(config.dialect);
     }
   }
 
@@ -231,6 +214,8 @@ export class JsonLogicCompiler {
 
     // Validate value
     if (!UNARY_OPERATORS.includes(operator)) {
+      if (value !== null) validateParameterValue(value);
+      if (value2 !== null && value2 !== undefined) validateParameterValue(value2);
       this.validator.validateValue(fieldName, operator, value);
     }
 
@@ -269,11 +254,10 @@ export class JsonLogicCompiler {
       // Special handling for 'contains' which can be Array or String
       if (operator === 'contains' && (fieldSchema.type === 'array' || fieldSchema.type === 'jsonb')) {
          if (!Array.isArray(value)) {
-            // It might be a single value check? e.g. tags contains 'a'
-            // But Postgres @> expects array.
-            // If user passed a single value, we could wrap it?
-            // Strict mode: expect array.
-            throw new CompilerError(`Array 'contains' requires array value`); 
+            throw new CompilerError(
+              `Operator 'contains' on array field '${fieldName}' requires an array value (subset check). ` +
+              `To check if array contains a single value, use 'any_of' operator.`
+            ); 
          }
          return this.dialect.handleArray(operator, column, value, context);
       }
@@ -283,6 +267,12 @@ export class JsonLogicCompiler {
       }
       const caseSensitive = fieldSchema.caseSensitive ?? false;
       return this.dialect.handleString(operator, column, value, context, caseSensitive);
+    }
+
+    // Handle null values for comparison operators (implicit rewrite)
+    if (value === null && ['eq', 'ne'].includes(operator)) {
+      const nullOperator = operator === 'eq' ? 'is_null' : 'is_not_null';
+      return this.dialect.handleNullCheck(nullOperator, column);
     }
 
     // Comparison operators

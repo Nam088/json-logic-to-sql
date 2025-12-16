@@ -6,7 +6,7 @@ export abstract class BaseDialect implements Dialect {
   abstract getParamPlaceholder(index: number): string;
 
   quoteIdentifier(key: string): string {
-    return `"${key}"`;
+    return `"${key.replace(/"/g, '""')}"`;
   }
 
   abstract handleString(operator: Operator, column: string, value: string, context: CompilerContext, caseSensitive?: boolean): SqlResult;

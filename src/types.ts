@@ -35,6 +35,8 @@ export interface SqlResult {
 // COMPILER CONFIG
 // ============================================
 
+import { Dialect } from './dialects/type';
+
 export interface CompilerConfig {
   /** Field schema definition */
   schema: FilterSchema;

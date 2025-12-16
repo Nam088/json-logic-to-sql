@@ -476,6 +476,9 @@ import type {
 ```
 
 ## Examples
+479: 
+480: For more comprehensive examples, check out the [examples directory](./examples) or the [unit tests](./src/__tests__) which cover all supported scenarios.
+
 
 ### Complex Nested Query
 

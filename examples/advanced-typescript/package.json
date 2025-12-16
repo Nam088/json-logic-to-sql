@@ -1,0 +1,18 @@
+{
+  "name": "json-logic-to-sql-advanced-example",
+  "version": "1.0.0",
+  "description": "Advanced TypeScript example of @nam088/json-logic-to-sql",
+  "type": "module",
+  "scripts": {
+    "start": "tsx index.ts",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@nam088/json-logic-to-sql": "^1.0.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.0"
+  }
+}
+
