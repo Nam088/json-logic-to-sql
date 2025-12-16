@@ -1,0 +1,19 @@
+{
+  "name": "mikro-orm-example",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "ts-node src/index.ts"
+  },
+  "dependencies": {
+    "@mikro-orm/core": "^6.0.0",
+    "@mikro-orm/sqlite": "^6.0.0",
+    "@nam088/json-logic-to-sql": "file:../../",
+    "reflect-metadata": "^0.2.0",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}
