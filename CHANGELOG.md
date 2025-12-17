@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/Nam088/json-logic-to-sql/compare/v1.2.0...v1.3.0) (2025-12-17)
+
+
+### Features
+
+* add support for customizable SQL parameter placeholder styles in pagination utility ([7cff33b](https://github.com/Nam088/json-logic-to-sql/commit/7cff33bea122c14ff7f8c916f3e9094d9e06ca42))
+
 # [1.2.0](https://github.com/Nam088/json-logic-to-sql/compare/v1.1.0...v1.2.0) (2025-12-17)
 
 
