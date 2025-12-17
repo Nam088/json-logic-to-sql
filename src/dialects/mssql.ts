@@ -3,10 +3,7 @@ import { BaseDialect } from './base';
 
 export class MssqlDialect extends BaseDialect {
   name = 'mssql';
-
-  getParamPlaceholder(index: number): string {
-    return `@p${index}`;
-  }
+  protected defaultPlaceholderStyle = 'at' as const;
 
   quoteIdentifier(key: string): string {
     return `[${key}]`;

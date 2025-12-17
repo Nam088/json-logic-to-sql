@@ -9,6 +9,7 @@ import type {
   ComputedFieldSchema,
 } from './types';
 import { applyTransforms } from './utils/transforms';
+import { paramsToArray } from './utils/pagination';
 import { SchemaValidator, SchemaValidationError } from './schema/validator';
 import { sanitizeInput, escapeIdentifier, validateParameterValue } from './security/sanitizer';
 import { JSON_LOGIC_TO_OPERATOR, UNARY_OPERATORS, RANGE_OPERATORS, ARRAY_OPERATORS } from './operators/index';
@@ -39,8 +40,15 @@ export class JsonLogicCompiler {
     // Initialize dialect
     if (dialect) {
       this.dialect = dialect;
+      // Apply placeholder style if provided
+      if (config.placeholderStyle) {
+        this.dialect.setPlaceholderStyle(config.placeholderStyle);
+      }
     } else {
-      this.dialect = createDialect(config.dialect);
+      this.dialect = createDialect({
+        name: config.dialect,
+        placeholderStyle: config.placeholderStyle,
+      });
     }
   }
 
@@ -63,6 +71,7 @@ export class JsonLogicCompiler {
     return {
       sql: result.sql,
       params: result.params,
+      paramsArray: paramsToArray(result.params),
     };
   }
 

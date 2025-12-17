@@ -90,6 +90,42 @@ async function main() {
   await em.persistAndFlush([user1, user2, user3, user4]);
   console.log('--- Database Seeded ---');
 
+  // === TEST: What does compiler.compile() return? ===
+  console.log('\n=== TESTING COMPILER OUTPUT STRUCTURE ===');
+  
+  const testConfig: CompilerConfig = {
+    schema: {
+      fields: {
+        name: { type: 'string', operators: ['eq', 'in'] },
+        age: { type: 'number', operators: ['eq', 'gt', 'lt'] },
+        status: { type: 'string', operators: ['eq'] },
+      },
+    },
+    dialect: 'postgresql', // Use postgresql to show $N style
+  };
+  
+  const testCompiler = new JsonLogicCompiler(testConfig);
+  
+  // Test: Complex AND with IN
+  const testResult = testCompiler.compile({
+    and: [
+      { '==': [{ var: 'status' }, 'active'] },
+      { '>': [{ var: 'age' }, 18] },
+      { in: [{ var: 'name' }, ['Alice', 'Bob', 'Charlie']] },
+    ]
+  });
+  
+  console.log('SQL:', testResult.sql);
+  console.log('Params (object):', testResult.params);
+  console.log('Params keys:', Object.keys(testResult.params));
+  
+  // How to convert to array:
+  const paramsArray = Object.keys(testResult.params)
+    .sort((a, b) => parseInt(a.slice(1)) - parseInt(b.slice(1)))
+    .map(k => testResult.params[k]);
+  console.log('Params as array:', paramsArray);
+  console.log('=== END TEST ===\n');
+
   // 4. Configure JSON Logic Compiler
   const config: CompilerConfig = {
     schema: {

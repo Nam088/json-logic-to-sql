@@ -1,9 +1,30 @@
 import { Operator, SqlResult, CompilerContext } from '../types';
-import { Dialect } from './type';
+import { Dialect, PlaceholderStyle } from './type';
 
 export abstract class BaseDialect implements Dialect {
   abstract name: string;
-  abstract getParamPlaceholder(index: number): string;
+  protected abstract defaultPlaceholderStyle: PlaceholderStyle;
+  protected _placeholderStyle?: PlaceholderStyle;
+
+  setPlaceholderStyle(style: PlaceholderStyle): void {
+    this._placeholderStyle = style;
+  }
+
+  protected get placeholderStyle(): PlaceholderStyle {
+    return this._placeholderStyle ?? this.defaultPlaceholderStyle;
+  }
+
+  getParamPlaceholder(index: number): string {
+    switch (this.placeholderStyle) {
+      case 'question':
+        return '?';
+      case 'at':
+        return `@p${index}`;
+      case 'dollar':
+      default:
+        return `$${index}`;
+    }
+  }
 
   quoteIdentifier(key: string): string {
     return `"${key.replace(/"/g, '""')}"`;

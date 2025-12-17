@@ -27,8 +27,10 @@ export type JsonLogicOperand = JsonLogicRule | JsonLogicValue;
 export interface SqlResult {
   /** WHERE clause without the WHERE keyword */
   sql: string;
-  /** Parameterized values */
+  /** Parameterized values as key-value map */
   params: Record<string, unknown>;
+  /** Parameterized values as ordered array (for Knex/MySQL style queries) */
+  paramsArray?: unknown[];
 }
 
 // ============================================
@@ -48,6 +50,13 @@ export interface CompilerConfig {
   paramStyle?: 'positional' | 'named';
   /** Target SQL dialect (default: 'postgresql') */
   dialect?: 'postgresql' | 'mysql' | 'mssql' | 'sqlite';
+  /** 
+   * Placeholder style for parameters (default: 'dollar' for postgresql, 'question' for mysql/sqlite)
+   * - 'dollar': $1, $2, $3 (PostgreSQL native)
+   * - 'question': ?, ?, ? (Knex, MySQL, SQLite)
+   * - 'at': @p1, @p2, @p3 (MSSQL)
+   */
+  placeholderStyle?: 'dollar' | 'question' | 'at';
   /** Lookup resolvers for remote options */
   lookups?: LookupRegistry;
 }

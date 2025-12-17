@@ -3,10 +3,7 @@ import { BaseDialect } from './base';
 
 export class SqliteDialect extends BaseDialect {
   name = 'sqlite';
-
-  getParamPlaceholder(index: number): string {
-    return '?';
-  }
+  protected defaultPlaceholderStyle = 'question' as const;
 
   handleString(
     operator: Operator,

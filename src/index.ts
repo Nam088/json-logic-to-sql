@@ -24,10 +24,13 @@ export type {
   CustomTransform,
 } from './types';
 
+// Dialect types
+export type { PlaceholderStyle } from './dialects/type';
+
 // Utilities
 export { sanitizeInput, escapeIdentifier } from './security/sanitizer';
 export { SchemaValidator } from './schema/validator';
-export { buildPagination, buildSort } from './utils/pagination';
+export { buildPagination, buildSort, paramsToArray } from './utils/pagination';
 export type { PaginationOptions, PaginationResult, SortOptions, SortResult } from './utils/pagination';
 export { buildSelect } from './utils/select';
 export type { SelectOptions, SelectResult } from './utils/select';

@@ -1,6 +1,18 @@
 import { Operator, SqlResult, CompilerContext } from '../types';
 
+export type PlaceholderStyle = 'dollar' | 'question' | 'at';
+
 export interface Dialect {
+  /**
+   * Name of the dialect
+   */
+  name: string;
+
+  /**
+   * Set the placeholder style for parameters
+   */
+  setPlaceholderStyle(style: PlaceholderStyle): void;
+
   /**
    * Get parameter placeholder for the given index (1-based)
    * e.g. $1, ?, @p1

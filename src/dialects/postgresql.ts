@@ -3,10 +3,7 @@ import { BaseDialect } from './base';
 
 export class PostgresDialect extends BaseDialect {
   name = 'postgresql';
-
-  getParamPlaceholder(index: number): string {
-    return `$${index}`;
-  }
+  protected defaultPlaceholderStyle = 'dollar' as const;
 
   handleComparison(
     operator: Operator,

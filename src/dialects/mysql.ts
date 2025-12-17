@@ -3,10 +3,7 @@ import { BaseDialect } from './base';
 
 export class MysqlDialect extends BaseDialect {
   name = 'mysql';
-
-  getParamPlaceholder(index: number): string {
-    return '?';
-  }
+  protected defaultPlaceholderStyle = 'question' as const;
 
   quoteIdentifier(key: string): string {
     return `\`${key}\``;

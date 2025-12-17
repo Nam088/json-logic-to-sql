@@ -1,6 +1,22 @@
 import type { FieldSchema, FilterSchema } from '../types';
 import { escapeIdentifier } from '../security/sanitizer';
 
+/**
+ * Convert params object to ordered array based on param keys
+ * Supports keys like: $1, $2, p1, p2, @p1, @p2
+ */
+export function paramsToArray(params: Record<string, unknown>): unknown[] {
+  const getParamIndex = (key: string): number => {
+    // Match patterns: $1, $2, p1, p2, @p1, @p2
+    const match = key.match(/[@$]?p?(\d+)/);
+    return match?.[1] ? parseInt(match[1], 10) : 0;
+  };
+
+  return Object.keys(params)
+    .sort((a, b) => getParamIndex(a) - getParamIndex(b))
+    .map((k) => params[k]);
+}
+
 export interface PaginationOptions {
   page?: number;
   pageSize?: number;
@@ -11,6 +27,8 @@ export interface PaginationOptions {
 export interface PaginationResult {
   sql: string;
   params: Record<string, unknown>;
+  /** Params as ordered array for Knex/MySQL style queries */
+  paramsArray: unknown[];
   meta: {
     page: number;
     pageSize: number;
@@ -57,9 +75,12 @@ export function buildPagination(
   const limitParam = startIndex;
   const offsetParam = startIndex + 1;
 
+  const params = { [`$${limitParam}`]: limit, [`$${offsetParam}`]: offset };
+
   return {
     sql: `LIMIT $${limitParam} OFFSET $${offsetParam}`,
-    params: { [`$${limitParam}`]: limit, [`$${offsetParam}`]: offset },
+    params,
+    paramsArray: paramsToArray(params),
     meta: {
       page,
       pageSize: limit,
