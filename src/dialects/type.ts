@@ -20,6 +20,12 @@ export interface Dialect {
   getParamPlaceholder(index: number): string;
 
   /**
+   * Get a unique key for storing params in the params object.
+   * Always uses unique keys (p1, p2, etc.) regardless of placeholder style.
+   */
+  getParamKey(index: number): string;
+
+  /**
    * Handle basic comparison operators: eq, ne, gt, gte, lt, lte
    */
   handleComparison(

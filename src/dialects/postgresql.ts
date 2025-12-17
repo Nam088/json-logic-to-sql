@@ -31,11 +31,12 @@ export class PostgresDialect extends BaseDialect {
     value: unknown,
     context: CompilerContext,
   ): SqlResult {
-    const param = this.getParamPlaceholder(context.paramIndex);
+    const placeholder = this.getParamPlaceholder(context.paramIndex);
+    const paramKey = this.getParamKey(context.paramIndex);
     context.paramIndex++;
     return {
-      sql: `${column} ${sqlOp} ${param}`,
-      params: { [param]: value },
+      sql: `${column} ${sqlOp} ${placeholder}`,
+      params: { [paramKey]: value },
     };
   }
 
@@ -45,12 +46,13 @@ export class PostgresDialect extends BaseDialect {
     value: unknown,
     context: CompilerContext,
   ): SqlResult {
-    const param = this.getParamPlaceholder(context.paramIndex);
+    const placeholder = this.getParamPlaceholder(context.paramIndex);
+    const paramKey = this.getParamKey(context.paramIndex);
     context.paramIndex++;
     const sqlOp = operator === 'any_of' ? '= ANY' : '<> ALL';
     return {
-      sql: `${param} ${sqlOp}(${column})`,
-      params: { [param]: value },
+      sql: `${placeholder} ${sqlOp}(${column})`,
+      params: { [paramKey]: value },
     };
   }
 
@@ -61,7 +63,8 @@ export class PostgresDialect extends BaseDialect {
     context: CompilerContext,
     caseSensitive: boolean = false,
   ): SqlResult {
-    const param = this.getParamPlaceholder(context.paramIndex);
+    const placeholder = this.getParamPlaceholder(context.paramIndex);
+    const paramKey = this.getParamKey(context.paramIndex);
     context.paramIndex++;
 
     let sqlOperator: string;
@@ -97,8 +100,8 @@ export class PostgresDialect extends BaseDialect {
     }
 
     return {
-      sql: `${column} ${sqlOperator} ${param}`,
-      params: { [param]: paramValue },
+      sql: `${column} ${sqlOperator} ${placeholder}`,
+      params: { [paramKey]: paramValue },
     };
   }
 
@@ -140,10 +143,11 @@ export class PostgresDialect extends BaseDialect {
     const placeholders: string[] = [];
 
     for (const value of values) {
-      const param = this.getParamPlaceholder(context.paramIndex);
+      const placeholder = this.getParamPlaceholder(context.paramIndex);
+      const paramKey = this.getParamKey(context.paramIndex);
       context.paramIndex++;
-      placeholders.push(param);
-      params[param] = value;
+      placeholders.push(placeholder);
+      params[paramKey] = value;
     }
 
     const sqlOperator = operator === 'in' ? 'IN' : 'NOT IN';
@@ -159,11 +163,12 @@ export class PostgresDialect extends BaseDialect {
     values: unknown[],
     context: CompilerContext,
   ): SqlResult {
-    const param = this.getParamPlaceholder(context.paramIndex);
+    const placeholder = this.getParamPlaceholder(context.paramIndex);
+    const paramKey = this.getParamKey(context.paramIndex);
     context.paramIndex++;
     return {
-      sql: `${column} @> ${param}`,
-      params: { [param]: values },
+      sql: `${column} @> ${placeholder}`,
+      params: { [paramKey]: values },
     };
   }
 
@@ -172,11 +177,12 @@ export class PostgresDialect extends BaseDialect {
     values: unknown[],
     context: CompilerContext,
   ): SqlResult {
-    const param = this.getParamPlaceholder(context.paramIndex);
+    const placeholder = this.getParamPlaceholder(context.paramIndex);
+    const paramKey = this.getParamKey(context.paramIndex);
     context.paramIndex++;
     return {
-      sql: `${column} <@ ${param}`,
-      params: { [param]: values },
+      sql: `${column} <@ ${placeholder}`,
+      params: { [paramKey]: values },
     };
   }
 
@@ -185,11 +191,12 @@ export class PostgresDialect extends BaseDialect {
     values: unknown[],
     context: CompilerContext,
   ): SqlResult {
-    const param = this.getParamPlaceholder(context.paramIndex);
+    const placeholder = this.getParamPlaceholder(context.paramIndex);
+    const paramKey = this.getParamKey(context.paramIndex);
     context.paramIndex++;
     return {
-      sql: `${column} && ${param}`,
-      params: { [param]: values },
+      sql: `${column} && ${placeholder}`,
+      params: { [paramKey]: values },
     };
   }
 

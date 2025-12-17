@@ -26,6 +26,14 @@ export abstract class BaseDialect implements Dialect {
     }
   }
 
+  /**
+   * Get a unique key for storing params in the params object.
+   * Always uses unique keys (p1, p2, etc.) regardless of placeholder style.
+   */
+  getParamKey(index: number): string {
+    return `p${index}`;
+  }
+
   quoteIdentifier(key: string): string {
     return `"${key.replace(/"/g, '""')}"`;
   }
@@ -39,7 +47,8 @@ export abstract class BaseDialect implements Dialect {
     value: unknown,
     context: CompilerContext,
   ): SqlResult {
-    const param = this.getParamPlaceholder(context.paramIndex);
+    const placeholder = this.getParamPlaceholder(context.paramIndex);
+    const paramKey = this.getParamKey(context.paramIndex);
     context.paramIndex++;
 
     let sqlOperator: string;
@@ -54,8 +63,8 @@ export abstract class BaseDialect implements Dialect {
     }
 
     return {
-      sql: `${column} ${sqlOperator} ${param}`,
-      params: { [param]: value },
+      sql: `${column} ${sqlOperator} ${placeholder}`,
+      params: { [paramKey]: value },
     };
   }
 
@@ -65,18 +74,20 @@ export abstract class BaseDialect implements Dialect {
     values: [unknown, unknown],
     context: CompilerContext,
   ): SqlResult {
-    const param1 = this.getParamPlaceholder(context.paramIndex);
+    const placeholder1 = this.getParamPlaceholder(context.paramIndex);
+    const paramKey1 = this.getParamKey(context.paramIndex);
     context.paramIndex++;
-    const param2 = this.getParamPlaceholder(context.paramIndex);
+    const placeholder2 = this.getParamPlaceholder(context.paramIndex);
+    const paramKey2 = this.getParamKey(context.paramIndex);
     context.paramIndex++;
 
     const sqlOperator = operator === 'between' ? 'BETWEEN' : 'NOT BETWEEN';
 
     return {
-      sql: `${column} ${sqlOperator} ${param1} AND ${param2}`,
+      sql: `${column} ${sqlOperator} ${placeholder1} AND ${placeholder2}`,
       params: {
-        [param1]: values[0],
-        [param2]: values[1],
+        [paramKey1]: values[0],
+        [paramKey2]: values[1],
       },
     };
   }

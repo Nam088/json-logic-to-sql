@@ -16,7 +16,8 @@ export class MssqlDialect extends BaseDialect {
     context: CompilerContext,
     caseSensitive: boolean = false,
   ): SqlResult {
-    const param = this.getParamPlaceholder(context.paramIndex);
+    const placeholder = this.getParamPlaceholder(context.paramIndex);
+    const paramKey = this.getParamKey(context.paramIndex);
     context.paramIndex++;
 
     let sqlOperator: string;
@@ -47,8 +48,8 @@ export class MssqlDialect extends BaseDialect {
     }
 
     return {
-      sql: `${column} ${sqlOperator} ${param}`,
-      params: { [param]: paramValue },
+      sql: `${column} ${sqlOperator} ${placeholder}`,
+      params: { [paramKey]: paramValue },
     };
   }
 
@@ -100,10 +101,11 @@ export class MssqlDialect extends BaseDialect {
     const placeholders: string[] = [];
 
     for (const value of values) {
-      const param = this.getParamPlaceholder(context.paramIndex);
+      const placeholder = this.getParamPlaceholder(context.paramIndex);
+      const paramKey = this.getParamKey(context.paramIndex);
       context.paramIndex++;
-      placeholders.push(param);
-      params[param] = value;
+      placeholders.push(placeholder);
+      params[paramKey] = value;
     }
 
     const sqlOperator = operator === 'in' ? 'IN' : 'NOT IN';
