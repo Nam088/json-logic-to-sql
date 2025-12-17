@@ -144,15 +144,9 @@ describe('Exhaustive Type-Operator Matrix', () => {
   const executeQuery = async (rule: any): Promise<any[]> => {
     if (!isDbConnected) return [];
 
-    const { sql, params } = compiler.compile(rule);
+    const { sql, paramsArray } = compiler.compile(rule);
     
-    const paramArray: unknown[] = [];
-    const paramSql = sql.replace(/\$(\d+)/g, (_, num) => {
-      paramArray.push(params[`$${num}`]);
-      return `$${paramArray.length}`;
-    });
-    
-    const result = await client.query(`SELECT * FROM json_logic_test WHERE ${paramSql}`, paramArray);
+    const result = await client.query(`SELECT * FROM json_logic_test WHERE ${sql}`, paramsArray);
     return result.rows;
   };
 

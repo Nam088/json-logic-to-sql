@@ -60,18 +60,11 @@ function getPlaceholder(style: PlaceholderStyle, index: number): string {
 }
 
 /**
- * Get param key based on style
+ * Get a unique key for storing params in the params object.
+ * Always uses unique keys (p1, p2, etc.) regardless of placeholder style.
  */
-function getParamKey(style: PlaceholderStyle, index: number): string {
-  switch (style) {
-    case 'question':
-      return `p${index}`;
-    case 'at':
-      return `@p${index}`;
-    case 'dollar':
-    default:
-      return `$${index}`;
-  }
+function getParamKey(index: number): string {
+  return `p${index}`;
 }
 
 /**
@@ -112,8 +105,8 @@ export function buildPagination(
 
   const limitPlaceholder = getPlaceholder(placeholderStyle, limitParamIndex);
   const offsetPlaceholder = getPlaceholder(placeholderStyle, offsetParamIndex);
-  const limitKey = getParamKey(placeholderStyle, limitParamIndex);
-  const offsetKey = getParamKey(placeholderStyle, offsetParamIndex);
+  const limitKey = getParamKey(limitParamIndex);
+  const offsetKey = getParamKey(offsetParamIndex);
 
   const params = { [limitKey]: limit, [offsetKey]: offset };
 

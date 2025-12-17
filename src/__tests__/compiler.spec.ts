@@ -72,7 +72,7 @@ describe('JsonLogicCompiler', () => {
       });
 
       expect(result.sql).toBe('"status" = $1');
-      expect(result.params).toEqual({ '$1': 'active' });
+      expect(result.params).toEqual({ 'p1': 'active' });
     });
 
     it('should compile != operator', () => {
@@ -81,7 +81,7 @@ describe('JsonLogicCompiler', () => {
       });
 
       expect(result.sql).toBe('"status" <> $1');
-      expect(result.params).toEqual({ '$1': 'inactive' });
+      expect(result.params).toEqual({ 'p1': 'inactive' });
     });
 
     it('should compile > operator', () => {
@@ -90,7 +90,7 @@ describe('JsonLogicCompiler', () => {
       });
 
       expect(result.sql).toBe('"age" > $1');
-      expect(result.params).toEqual({ '$1': 18 });
+      expect(result.params).toEqual({ 'p1': 18 });
     });
 
     it('should compile >= operator', () => {
@@ -99,7 +99,7 @@ describe('JsonLogicCompiler', () => {
       });
 
       expect(result.sql).toBe('"age" >= $1');
-      expect(result.params).toEqual({ '$1': 21 });
+      expect(result.params).toEqual({ 'p1': 21 });
     });
 
     it('should compile < operator', () => {
@@ -108,7 +108,7 @@ describe('JsonLogicCompiler', () => {
       });
 
       expect(result.sql).toBe('"age" < $1');
-      expect(result.params).toEqual({ '$1': 65 });
+      expect(result.params).toEqual({ 'p1': 65 });
     });
 
     it('should compile <= operator', () => {
@@ -117,7 +117,7 @@ describe('JsonLogicCompiler', () => {
       });
 
       expect(result.sql).toBe('"age" <= $1');
-      expect(result.params).toEqual({ '$1': 100 });
+      expect(result.params).toEqual({ 'p1': 100 });
     });
   });
 
@@ -131,7 +131,7 @@ describe('JsonLogicCompiler', () => {
       });
 
       expect(result.sql).toBe('(("status" = $1) AND ("age" > $2))');
-      expect(result.params).toEqual({ '$1': 'active', '$2': 18 });
+      expect(result.params).toEqual({ 'p1': 'active', 'p2': 18 });
     });
 
     it('should compile or operator', () => {
@@ -143,7 +143,7 @@ describe('JsonLogicCompiler', () => {
       });
 
       expect(result.sql).toBe('(("status" = $1) OR ("status" = $2))');
-      expect(result.params).toEqual({ '$1': 'active', '$2': 'inactive' });
+      expect(result.params).toEqual({ 'p1': 'active', 'p2': 'inactive' });
     });
 
     it('should compile not operator', () => {
@@ -152,7 +152,7 @@ describe('JsonLogicCompiler', () => {
       });
 
       expect(result.sql).toBe('NOT ("status" = $1)');
-      expect(result.params).toEqual({ '$1': 'inactive' });
+      expect(result.params).toEqual({ 'p1': 'inactive' });
     });
 
     it('should compile nested logical operators', () => {
@@ -171,7 +171,7 @@ describe('JsonLogicCompiler', () => {
       expect(result.sql).toBe(
         '(("status" = $1) AND ((("age" > $2) OR ("isActive" = $3))))',
       );
-      expect(result.params).toEqual({ '$1': 'active', '$2': 18, '$3': true });
+      expect(result.params).toEqual({ 'p1': 'active', 'p2': 18, 'p3': true });
     });
   });
 
@@ -182,7 +182,7 @@ describe('JsonLogicCompiler', () => {
       });
 
       expect(result.sql).toBe('"name" ILIKE $1');
-      expect(result.params).toEqual({ '$1': '%john%' });
+      expect(result.params).toEqual({ 'p1': '%john%' });
     });
 
     it('should compile starts_with operator', () => {
@@ -191,7 +191,7 @@ describe('JsonLogicCompiler', () => {
       });
 
       expect(result.sql).toBe('"name" ILIKE $1');
-      expect(result.params).toEqual({ '$1': 'J%' });
+      expect(result.params).toEqual({ 'p1': 'J%' });
     });
 
     it('should compile ilike operator', () => {
@@ -200,7 +200,7 @@ describe('JsonLogicCompiler', () => {
       });
 
       expect(result.sql).toBe('"name" ILIKE $1');
-      expect(result.params).toEqual({ '$1': '%test%' });
+      expect(result.params).toEqual({ 'p1': '%test%' });
     });
   });
 
@@ -211,7 +211,7 @@ describe('JsonLogicCompiler', () => {
       });
 
       expect(result.sql).toBe('"status" IN ($1, $2)');
-      expect(result.params).toEqual({ '$1': 'active', '$2': 'inactive' });
+      expect(result.params).toEqual({ 'p1': 'active', 'p2': 'inactive' });
     });
 
     it('should compile in operator with empty array', () => {
@@ -261,7 +261,7 @@ describe('JsonLogicCompiler', () => {
       });
 
       expect(result.sql).toBe('"age" BETWEEN $1 AND $2');
-      expect(result.params).toEqual({ '$1': 18, '$2': 65 });
+      expect(result.params).toEqual({ 'p1': 18, 'p2': 65 });
     });
   });
 

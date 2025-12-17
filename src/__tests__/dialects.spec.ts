@@ -19,7 +19,7 @@ import { FilterSchema } from '../types';
       // Logic handling might wrap individual conditions or the whole group differently depending on implementation
       // Updating expectation to match received: (("name" = $1) AND ("age" > $2))
       expect(result.sql).toBe('(("name" = $1) AND ("age" > $2))');
-      expect(result.params).toEqual({ '$1': 'John', '$2': 18 });
+      expect(result.params).toEqual({ 'p1': 'John', 'p2': 18 });
     });
   });
 
@@ -61,7 +61,7 @@ import { FilterSchema } from '../types';
     it('should use @pN placeholders', () => {
       const result = compiler.compile({ and: [{ '==': [{ var: 'name' }, 'John'] }, { '>': [{ var: 'age' }, 18] }] });
       expect(result.sql).toBe('(([name] = @p1) AND ([age] > @p2))');
-      expect(result.params).toEqual({ '@p1': 'John', '@p2': 18 });
+      expect(result.params).toEqual({ 'p1': 'John', 'p2': 18 });
     });
 
     it('should throw for regex', () => {
@@ -75,7 +75,7 @@ import { FilterSchema } from '../types';
         // schema 'tags' is array, but let's test string field
         const result = compiler.compile({ 'contains': [{ var: 'name' }, 'oh'] });
         expect(result.sql).toBe('[name] LIKE @p1');
-        expect(result.params).toEqual({ '@p1': '%oh%' });
+        expect(result.params).toEqual({ 'p1': '%oh%' });
     });
   });
 

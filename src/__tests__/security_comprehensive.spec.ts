@@ -33,7 +33,7 @@ describe('Comprehensive Security Suite', () => {
        const malicious = "' OR 1=1; DROP TABLE users; --";
        const result = compiler.compile({ 'eq': [{ var: 'strField' }, malicious] });
        expect(result.sql).toBe('"strField" = $1');
-       expect(result.params['$1']).toBe(malicious);
+       expect(result.params['p1']).toBe(malicious);
     });
 
     it('should reject identifiers containing SQL comments/commands', () => {
@@ -122,7 +122,7 @@ describe('Comprehensive Security Suite', () => {
          ] 
        };
        const result = compiler.compile(validRule as any);
-       expect(result.params['$1']).toEqual({ 'constructor': 'Lego' });
+       expect(result.params['p1']).toEqual({ 'constructor': 'Lego' });
     });
     it('should NOT allow modifications to Global Object Prototype via constructor', () => {
        // ATTACK VECTOR: Try to modify Object.prototype using constructor key

@@ -21,16 +21,16 @@ describe('Operators', () => {
 
       it('should join conditions with AND', () => {
         const conditions = [
-          { sql: '"a" = $1', params: { '$1': 1 } },
-          { sql: '"b" = $2', params: { '$2': 2 } },
+          { sql: '"a" = $1', params: { 'p1': 1 } },
+          { sql: '"b" = $2', params: { 'p2': 2 } },
         ];
         const result = handleAnd(conditions, createContext());
         expect(result.sql).toBe('(("a" = $1) AND ("b" = $2))');
-        expect(result.params).toEqual({ '$1': 1, '$2': 2 });
+        expect(result.params).toEqual({ 'p1': 1, 'p2': 2 });
       });
 
       it('should handle single condition', () => {
-        const conditions = [{ sql: '"x" = $1', params: { '$1': 'test' } }];
+        const conditions = [{ sql: '"x" = $1', params: { 'p1': 'test' } }];
         const result = handleAnd(conditions, createContext());
         expect(result.sql).toBe('(("x" = $1))');
       });
@@ -44,8 +44,8 @@ describe('Operators', () => {
 
       it('should join conditions with OR', () => {
         const conditions = [
-          { sql: '"a" = $1', params: { '$1': 1 } },
-          { sql: '"b" = $2', params: { '$2': 2 } },
+          { sql: '"a" = $1', params: { 'p1': 1 } },
+          { sql: '"b" = $2', params: { 'p2': 2 } },
         ];
         const result = handleOr(conditions, createContext());
         expect(result.sql).toBe('(("a" = $1) OR ("b" = $2))');
@@ -54,7 +54,7 @@ describe('Operators', () => {
 
     describe('handleNot', () => {
       it('should wrap condition with NOT', () => {
-        const condition = { sql: '"x" = $1', params: { '$1': 'test' } };
+        const condition = { sql: '"x" = $1', params: { 'p1': 'test' } };
         const result = handleNot(condition);
         expect(result.sql).toBe('NOT ("x" = $1)');
       });
@@ -67,7 +67,7 @@ describe('Operators', () => {
         const ctx = createContext();
         const result = dialect.handleComparison('eq', '"name"', 'John', ctx);
         expect(result.sql).toBe('"name" = $1');
-        expect(result.params).toEqual({ '$1': 'John' });
+        expect(result.params).toEqual({ 'p1': 'John' });
         expect(ctx.paramIndex).toBe(2);
       });
 
@@ -107,7 +107,7 @@ describe('Operators', () => {
         const ctx = createContext();
         const result = dialect.handleBetween('between', '"age"', [18, 65], ctx);
         expect(result.sql).toBe('"age" BETWEEN $1 AND $2');
-        expect(result.params).toEqual({ '$1': 18, '$2': 65 });
+        expect(result.params).toEqual({ 'p1': 18, 'p2': 65 });
       });
 
       it('should handle not_between operator', () => {
@@ -137,28 +137,28 @@ describe('Operators', () => {
         const ctx = createContext();
         const result = dialect.handleString('contains', '"name"', 'john', ctx, false);
         expect(result.sql).toBe('"name" ILIKE $1');
-        expect(result.params).toEqual({ '$1': '%john%' });
+        expect(result.params).toEqual({ 'p1': '%john%' });
       });
 
       it('should handle contains (case sensitive)', () => {
         const ctx = createContext();
         const result = dialect.handleString('contains', '"name"', 'John', ctx, true);
         expect(result.sql).toBe('"name" LIKE $1');
-        expect(result.params).toEqual({ '$1': '%John%' });
+        expect(result.params).toEqual({ 'p1': '%John%' });
       });
 
       it('should handle starts_with', () => {
         const ctx = createContext();
         const result = dialect.handleString('starts_with', '"code"', 'ABC', ctx, false);
         expect(result.sql).toBe('"code" ILIKE $1');
-        expect(result.params).toEqual({ '$1': 'ABC%' });
+        expect(result.params).toEqual({ 'p1': 'ABC%' });
       });
 
       it('should handle ends_with', () => {
         const ctx = createContext();
         const result = dialect.handleString('ends_with', '"email"', '@gmail.com', ctx, false);
         expect(result.sql).toBe('"email" ILIKE $1');
-        expect(result.params).toEqual({ '$1': '%@gmail.com' });
+        expect(result.params).toEqual({ 'p1': '%@gmail.com' });
       });
 
       it('should handle like operator', () => {
@@ -188,7 +188,7 @@ describe('Operators', () => {
       it('should escape LIKE special characters in contains', () => {
         const ctx = createContext();
         const result = dialect.handleString('contains', '"name"', '50%_off', ctx, false);
-        expect(result.params).toEqual({ '$1': '%50\\%\\_off%' });
+        expect(result.params).toEqual({ 'p1': '%50\\%\\_off%' });
       });
     });
   });
@@ -199,7 +199,7 @@ describe('Operators', () => {
         const ctx = createContext();
         const result = dialect.handleArray('in', '"status"', ['a', 'b', 'c'], ctx);
         expect(result.sql).toBe('"status" IN ($1, $2, $3)');
-        expect(result.params).toEqual({ '$1': 'a', '$2': 'b', '$3': 'c' });
+        expect(result.params).toEqual({ 'p1': 'a', 'p2': 'b', 'p3': 'c' });
       });
 
       it('should return 1=0 for empty in array', () => {
@@ -226,7 +226,7 @@ describe('Operators', () => {
         const ctx = createContext();
         const result = dialect.handleArray('contains', '"tags"', ['a', 'b'], ctx);
         expect(result.sql).toBe('"tags" @> $1');
-        expect(result.params).toEqual({ '$1': ['a', 'b'] });
+        expect(result.params).toEqual({ 'p1': ['a', 'b'] });
       });
 
       it('should handle contained_by (<@)', () => {

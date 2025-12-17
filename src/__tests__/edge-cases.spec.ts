@@ -75,12 +75,12 @@ describe('Edge Cases', () => {
       // Should have params $1 through $6
       expect(Object.keys(result.params).length).toBe(6);
       expect(result.params).toEqual({
-        '$1': 'active',
-        '$2': 18,
-        '$3': 65,
-        '$4': true,
-        '$5': 'John',
-        '$6': 'Jane',
+        'p1': 'active',
+        'p2': 18,
+        'p3': 65,
+        'p4': true,
+        'p5': 'John',
+        'p6': 'Jane',
       });
     });
 
@@ -165,7 +165,7 @@ describe('Edge Cases', () => {
 
       // First condition uses $1, empty IN returns '1=0'
       expect(result.sql).toBe('((\"status\" = $1) AND (1=0))');
-      expect(result.params).toEqual({ '$1': 'active' });
+      expect(result.params).toEqual({ 'p1': 'active' });
     });
 
     it('should handle IN with single item array', () => {
@@ -174,7 +174,7 @@ describe('Edge Cases', () => {
       });
 
       expect(result.sql).toBe('\"status\" IN ($1)');
-      expect(result.params).toEqual({ '$1': 'active' });
+      expect(result.params).toEqual({ 'p1': 'active' });
     });
 
     it('should handle NOT IN with single item array', () => {
@@ -183,7 +183,7 @@ describe('Edge Cases', () => {
       });
 
       expect(result.sql).toBe('\"status\" NOT IN ($1)');
-      expect(result.params).toEqual({ '$1': 'inactive' });
+      expect(result.params).toEqual({ 'p1': 'inactive' });
     });
   });
 
@@ -198,8 +198,8 @@ describe('Edge Cases', () => {
       expect(Object.keys(result.params).length).toBe(50);
       
       // Verify param order
-      expect(result.params['$1']).toBe(1);
-      expect(result.params['$50']).toBe(50);
+      expect(result.params['p1']).toBe(1);
+      expect(result.params['p50']).toBe(50);
     });
   });
 
@@ -215,13 +215,13 @@ describe('Edge Cases', () => {
       });
 
       expect(result.params).toEqual({
-        '$1': 18,
-        '$2': 65,
-        '$3': 'active',
-        '$4': 'A',
-        '$5': 'B',
-        '$6': 'C',
-        '$7': 5.5,
+        'p1': 18,
+        'p2': 65,
+        'p3': 'active',
+        'p4': 'A',
+        'p5': 'B',
+        'p6': 'C',
+        'p7': 5.5,
       });
     });
 
@@ -243,10 +243,10 @@ describe('Edge Cases', () => {
         ],
       });
 
-      expect(result.params['$1']).toBe('active');
-      expect(result.params['$2']).toBe(18);
-      expect(result.params['$3']).toBe('inactive');
-      expect(result.params['$4']).toBe(65);
+      expect(result.params['p1']).toBe('active');
+      expect(result.params['p2']).toBe(18);
+      expect(result.params['p3']).toBe('inactive');
+      expect(result.params['p4']).toBe(65);
     });
   });
 
@@ -352,7 +352,7 @@ describe('Edge Cases', () => {
         '==': [{ var: 'isActive' }, true],
       });
 
-      expect(result.params['$1']).toBe(true);
+      expect(result.params['p1']).toBe(true);
     });
 
     it('should handle false boolean', () => {
@@ -360,7 +360,7 @@ describe('Edge Cases', () => {
         '==': [{ var: 'isActive' }, false],
       });
 
-      expect(result.params['$1']).toBe(false);
+      expect(result.params['p1']).toBe(false);
     });
   });
 
@@ -370,7 +370,7 @@ describe('Edge Cases', () => {
         '>': [{ var: 'score' }, 3.14159],
       });
 
-      expect(result.params['$1']).toBe(3.14159);
+      expect(result.params['p1']).toBe(3.14159);
     });
 
     it('should handle negative numbers', () => {
@@ -378,8 +378,8 @@ describe('Edge Cases', () => {
         between: [{ var: 'score' }, -100.5, 100.5],
       });
 
-      expect(result.params['$1']).toBe(-100.5);
-      expect(result.params['$2']).toBe(100.5);
+      expect(result.params['p1']).toBe(-100.5);
+      expect(result.params['p2']).toBe(100.5);
     });
 
     it('should handle zero', () => {
@@ -387,7 +387,7 @@ describe('Edge Cases', () => {
         '==': [{ var: 'score' }, 0],
       });
 
-      expect(result.params['$1']).toBe(0);
+      expect(result.params['p1']).toBe(0);
     });
   });
 
@@ -397,7 +397,7 @@ describe('Edge Cases', () => {
         '>': [{ var: 'createdAt' }, '2024-01-01T00:00:00.000Z'],
       });
 
-      expect(result.params['$1']).toBe('2024-01-01T00:00:00.000Z');
+      expect(result.params['p1']).toBe('2024-01-01T00:00:00.000Z');
     });
 
     it('should handle date-only strings', () => {
@@ -405,8 +405,8 @@ describe('Edge Cases', () => {
         between: [{ var: 'createdAt' }, '2024-01-01', '2024-12-31'],
       });
 
-      expect(result.params['$1']).toBe('2024-01-01');
-      expect(result.params['$2']).toBe('2024-12-31');
+      expect(result.params['p1']).toBe('2024-01-01');
+      expect(result.params['p2']).toBe('2024-12-31');
     });
   });
 
@@ -416,7 +416,7 @@ describe('Edge Cases', () => {
         '==': [{ var: 'name' }, ''],
       });
 
-      expect(result.params['$1']).toBe('');
+      expect(result.params['p1']).toBe('');
     });
 
     it('should handle string with special characters', () => {
@@ -424,7 +424,7 @@ describe('Edge Cases', () => {
         '==': [{ var: 'name' }, "O'Brien"],
       });
 
-      expect(result.params['$1']).toBe("O'Brien");
+      expect(result.params['p1']).toBe("O'Brien");
     });
 
     it('should handle string with unicode', () => {
@@ -432,7 +432,7 @@ describe('Edge Cases', () => {
         '==': [{ var: 'name' }, '日本語'],
       });
 
-      expect(result.params['$1']).toBe('日本語');
+      expect(result.params['p1']).toBe('日本語');
     });
 
     it('should escape LIKE wildcards in contains', () => {
@@ -441,7 +441,7 @@ describe('Edge Cases', () => {
       });
 
       // % should be escaped
-      expect(result.params['$1']).toBe('%100\\%%');
+      expect(result.params['p1']).toBe('%100\\%%');
     });
 
     it('should escape underscore in contains', () => {
@@ -450,7 +450,7 @@ describe('Edge Cases', () => {
       });
 
       // _ should be escaped
-      expect(result.params['$1']).toBe('%user\\_name%');
+      expect(result.params['p1']).toBe('%user\\_name%');
     });
   });
 
@@ -518,7 +518,7 @@ describe('Edge Cases', () => {
       });
 
       expect(result.sql).toBe('$1 = ANY(\"tags\")');
-      expect(result.params['$1']).toBe('urgent');
+      expect(result.params['p1']).toBe('urgent');
     });
 
     it('should handle not_any_of operator', () => {
@@ -527,7 +527,7 @@ describe('Edge Cases', () => {
       });
 
       expect(result.sql).toBe('$1 <> ALL(\"tags\")');
-      expect(result.params['$1']).toBe('spam');
+      expect(result.params['p1']).toBe('spam');
     });
   });
 

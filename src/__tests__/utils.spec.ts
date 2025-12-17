@@ -24,7 +24,7 @@ describe('Utilities', () => {
       const result = buildPagination({ page: 2, pageSize: 10 });
 
       expect(result.sql).toBe('LIMIT $1 OFFSET $2');
-      expect(result.params).toEqual({ '$1': 10, '$2': 10 });
+      expect(result.params).toEqual({ 'p1': 10, 'p2': 10 });
       expect(result.meta).toEqual({ page: 2, pageSize: 10, offset: 10 });
       expect(result.nextParamIndex).toBe(3);
     });
@@ -33,7 +33,7 @@ describe('Utilities', () => {
       const result = buildPagination({ offset: 50, limit: 25 });
 
       expect(result.sql).toBe('LIMIT $1 OFFSET $2');
-      expect(result.params).toEqual({ '$1': 25, '$2': 50 });
+      expect(result.params).toEqual({ 'p1': 25, 'p2': 50 });
       expect(result.nextParamIndex).toBe(3);
     });
 
@@ -57,7 +57,7 @@ describe('Utilities', () => {
       const result = buildPagination({ page: 1, pageSize: 20 }, 100, 6);
 
       expect(result.sql).toBe('LIMIT $6 OFFSET $7');
-      expect(result.params).toEqual({ '$6': 20, '$7': 0 });
+      expect(result.params).toEqual({ 'p6': 20, 'p7': 0 });
       expect(result.nextParamIndex).toBe(8);
     });
 

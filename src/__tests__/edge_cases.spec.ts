@@ -151,7 +151,7 @@ describe('Edge Cases', () => {
        const result = compiler.compile({ '==': [{ var: 'strField' }, malicious] });
        // Should be literally $1, not inline
        expect(result.sql).toBe('"strField" = $1');
-       expect(result.params['$1']).toBe(malicious);
+       expect(result.params['p1']).toBe(malicious);
     });
 
     it('should throw on Null Byte in string value', () => {

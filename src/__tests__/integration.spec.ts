@@ -121,16 +121,9 @@ describe('PostgreSQL Integration Tests', () => {
   const executeQuery = async (rule: any): Promise<any[]> => {
     if (!isDbConnected) return [];
 
-    const { sql, params } = compiler.compile(rule);
+    const { sql, paramsArray } = compiler.compile(rule);
     
-    // Convert params object to positional array
-    const paramArray: unknown[] = [];
-    const paramSql = sql.replace(/\$(\d+)/g, (_, num) => {
-      paramArray.push(params[`$${num}`]);
-      return `$${paramArray.length}`;
-    });
-    
-    const result = await client.query(`SELECT * FROM json_logic_test WHERE ${paramSql}`, paramArray);
+    const result = await client.query(`SELECT * FROM json_logic_test WHERE ${sql}`, paramsArray);
     return result.rows;
   };
 
@@ -545,7 +538,7 @@ describe('PostgreSQL Integration Tests', () => {
 
       const paramArray = Object.keys(params).sort().map(k => params[k]);
       // Note: This param replacement is simplified, assuming $1, $2 order
-      const executedSql = sql.replace('$1', '$1').replace('$2', '$2'); 
+      const executedSql = sql.replace('p1', 'p1').replace('p2', 'p2'); 
       
       const result = await client.query(
         `SELECT * FROM json_logic_test WHERE ${executedSql}`, 
@@ -592,7 +585,7 @@ describe('PostgreSQL Integration Tests', () => {
 
       const paramArray = Object.keys(params).sort().map(k => params[k]);
       // Note: This param replacement is simplified
-      const executedSql = sql.replace('$1', '$1').replace('$2', '$2'); 
+      const executedSql = sql.replace('p1', 'p1').replace('p2', 'p2'); 
 
       // 4. Exec JOIN query
       const query = `
