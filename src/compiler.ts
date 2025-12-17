@@ -232,30 +232,46 @@ export class JsonLogicCompiler {
     const column = this.buildColumnRef(fieldName, fieldSchema);
 
     context.conditionCount++;
+    
+    // Set field type in context for conditional JSONB casting
+    const previousFieldType = context.fieldType;
+    context.fieldType = fieldSchema.type;
 
-    // Handle based on operator type
-    if (UNARY_OPERATORS.includes(operator)) {
-      return this.dialect.handleNullCheck(operator, column);
-    }
-
-    if (RANGE_OPERATORS.includes(operator)) {
-      if (value2 === null) {
-        throw new CompilerError(`${operator} requires two values`);
+    try {
+      // Handle based on operator type
+      if (UNARY_OPERATORS.includes(operator)) {
+        return this.dialect.handleNullCheck(operator, column);
       }
-      this.validator.validateValue(fieldName, operator, value2);
-      return this.dialect.handleBetween(operator, column, [value, value2], context);
-    }
 
-    if (ARRAY_OPERATORS.includes(operator)) {
-      if (!Array.isArray(value)) {
-        throw new CompilerError(`${operator} requires array value`);
+      if (RANGE_OPERATORS.includes(operator)) {
+        if (value2 === null) {
+          throw new CompilerError(`${operator} requires two values`);
+        }
+        this.validator.validateValue(fieldName, operator, value2);
+        return this.dialect.handleBetween(operator, column, [value, value2], context);
       }
-      return this.dialect.handleArray(operator, column, value, context);
+
+      if (ARRAY_OPERATORS.includes(operator)) {
+        if (!Array.isArray(value)) {
+          throw new CompilerError(`${operator} requires array value`);
+        }
+        return this.dialect.handleArray(operator, column, value, context);
+      }
+    } finally {
+      // Restore previous field type
+      context.fieldType = previousFieldType;
     }
 
     // Any of array column operators
     if (['any_of', 'not_any_of'].includes(operator)) {
-      return this.dialect.handleAnyOf(operator, column, value, context);
+      // Set field type for any_of (may need JSONB casting)
+      const previousFieldType = context.fieldType;
+      context.fieldType = fieldSchema.type;
+      try {
+        return this.dialect.handleAnyOf(operator, column, value, context);
+      } finally {
+        context.fieldType = previousFieldType;
+      }
     }
 
     // String operators
@@ -268,6 +284,7 @@ export class JsonLogicCompiler {
               `To check if array contains a single value, use 'any_of' operator.`
             ); 
          }
+         // Field type already set above
          return this.dialect.handleArray(operator, column, value, context);
       }
 

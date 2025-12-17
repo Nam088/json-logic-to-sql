@@ -57,6 +57,24 @@ export interface CompilerConfig {
    * - 'at': @p1, @p2, @p3 (MSSQL)
    */
   placeholderStyle?: 'dollar' | 'question' | 'at';
+  /**
+   * Parameter key style in params object (default: 'unified')
+   * - 'unified': Always use p1, p2, p3... (consistent across all dialects)
+   * - 'legacy': Use $1, $2 for PostgreSQL, @p1, @p2 for MSSQL, p1, p2 for MySQL/SQLite
+   * 
+   * @todo TODO: Implement paramKeyStyle feature
+   * Currently always uses 'unified' style (p1, p2, p3...).
+   * To implement 'legacy' style:
+   * 1. Pass paramKeyStyle from CompilerConfig to CompilerContext
+   * 2. Update BaseDialect.getParamKey() to check context.paramKeyStyle
+   * 3. If 'legacy', return placeholder as key (e.g., '$1', '@p1')
+   * 4. If 'unified' (default), return 'p1', 'p2'...
+   * 5. Update all dialect implementations to use context.paramKeyStyle
+   * 
+   * This will allow backward compatibility for code that accesses params['$1'] directly
+   * instead of using paramsArray.
+   */
+  paramKeyStyle?: 'unified' | 'legacy';
   /** Lookup resolvers for remote options */
   lookups?: LookupRegistry;
 }
@@ -301,4 +319,6 @@ export interface CompilerContext {
   conditionCount: number;
   paramIndex: number;
   params: Record<string, unknown>;
+  /** Current field type being processed (for conditional JSONB casting) */
+  fieldType?: FieldType;
 }

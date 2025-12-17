@@ -14,7 +14,16 @@ export class PostgresDialect extends BaseDialect {
     // Handle JSON operators
     switch (operator) {
       case 'json_contains':
-        return this.simpleOp(column, '@>', value, context);
+        // For JSONB, cast parameter to JSONB
+        const placeholder = this.getParamPlaceholder(context.paramIndex);
+        const paramKey = this.getParamKey(context.paramIndex);
+        context.paramIndex++;
+        // Cast to JSONB for proper type handling (json_contains is always for JSONB)
+        const castPlaceholder = placeholder === '?' ? '?::jsonb' : `${placeholder}::jsonb`;
+        return {
+          sql: `${column} @> ${castPlaceholder}`,
+          params: { [paramKey]: value },
+        };
       case 'json_has_key':
         return this.simpleOp(column, '?', value, context);
       case 'json_has_any_keys':
@@ -166,8 +175,12 @@ export class PostgresDialect extends BaseDialect {
     const placeholder = this.getParamPlaceholder(context.paramIndex);
     const paramKey = this.getParamKey(context.paramIndex);
     context.paramIndex++;
+    // Cast to JSONB only for JSONB columns, not PostgreSQL native arrays
+    const castPlaceholder = context.fieldType === 'jsonb'
+      ? (placeholder === '?' ? '?::jsonb' : `${placeholder}::jsonb`)
+      : placeholder;
     return {
-      sql: `${column} @> ${placeholder}`,
+      sql: `${column} @> ${castPlaceholder}`,
       params: { [paramKey]: values },
     };
   }
@@ -180,8 +193,12 @@ export class PostgresDialect extends BaseDialect {
     const placeholder = this.getParamPlaceholder(context.paramIndex);
     const paramKey = this.getParamKey(context.paramIndex);
     context.paramIndex++;
+    // Cast to JSONB only for JSONB columns, not PostgreSQL native arrays
+    const castPlaceholder = context.fieldType === 'jsonb'
+      ? (placeholder === '?' ? '?::jsonb' : `${placeholder}::jsonb`)
+      : placeholder;
     return {
-      sql: `${column} <@ ${placeholder}`,
+      sql: `${column} <@ ${castPlaceholder}`,
       params: { [paramKey]: values },
     };
   }
@@ -194,8 +211,12 @@ export class PostgresDialect extends BaseDialect {
     const placeholder = this.getParamPlaceholder(context.paramIndex);
     const paramKey = this.getParamKey(context.paramIndex);
     context.paramIndex++;
+    // Cast to JSONB only for JSONB columns, not PostgreSQL native arrays
+    const castPlaceholder = context.fieldType === 'jsonb'
+      ? (placeholder === '?' ? '?::jsonb' : `${placeholder}::jsonb`)
+      : placeholder;
     return {
-      sql: `${column} && ${placeholder}`,
+      sql: `${column} && ${castPlaceholder}`,
       params: { [paramKey]: values },
     };
   }
