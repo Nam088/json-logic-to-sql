@@ -396,6 +396,14 @@ export class JsonLogicCompiler {
       } else if (regularField.type === 'uuid' && this.dialect.name === 'postgresql') {
         // PostgreSQL: cast text to uuid
         jsonPathExpr = `(${regularField.jsonPath})::uuid`;
+      } else if (regularField.type === 'array' && this.dialect.name === 'postgresql') {
+        // Array in JSONB: if using ->> (text), cast back to jsonb for array operators
+        // If using -> (jsonb), no cast needed
+        if (regularField.jsonPath.includes('->>')) {
+          // User used ->> but needs jsonb for array operations
+          jsonPathExpr = `(${regularField.jsonPath})::jsonb`;
+        }
+        // If using ->, keep as is (already jsonb)
       }
       
       return jsonPathExpr;

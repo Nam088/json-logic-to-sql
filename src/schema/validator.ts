@@ -86,6 +86,22 @@ export class SchemaValidator {
       return value;
     }
     
+    // For range operators (between, not_between), validate array with 2 elements
+    if (['between', 'not_between'].includes(operator) && Array.isArray(value)) {
+      if (value.length !== 2) {
+        throw new SchemaValidationError(
+          `Operator '${operator}' requires an array with exactly 2 values`,
+          fieldName,
+          operator,
+        );
+      }
+      // Validate each element
+      for (const item of value) {
+        this.validateSingleValue(fieldName, field, operator, item);
+      }
+      return value;
+    }
+    
     return this.validateSingleValue(fieldName, field, operator, value);
   }
 

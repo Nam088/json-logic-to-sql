@@ -19,6 +19,8 @@ export const JSON_LOGIC_TO_OPERATOR: Record<string, Operator> = {
   '<=': 'lte',
   'in': 'in',
   '!in': 'not_in',
+  'between': 'between',
+  'not_between': 'not_between',
 };
 
 /**
