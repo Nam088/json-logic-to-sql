@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/Nam088/json-logic-to-sql/compare/v1.4.0...v1.5.0) (2025-12-17)
+
+
+### Features
+
+* enhance JsonLogicCompiler and PostgresDialect for conditional JSONB casting and parameter handling ([5775e9d](https://github.com/Nam088/json-logic-to-sql/commit/5775e9d60fdf7b71bf4605746787434e7867ef0a))
+
 # [1.4.0](https://github.com/Nam088/json-logic-to-sql/compare/v1.3.0...v1.4.0) (2025-12-17)
 
 
