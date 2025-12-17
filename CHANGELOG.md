@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/Nam088/json-logic-to-sql/compare/v1.5.0...v1.6.0) (2025-12-17)
+
+
+### Features
+
+* enhance JsonLogicCompiler and PostgresDialect with improved transform handling and dialect-specific support ([7e86d76](https://github.com/Nam088/json-logic-to-sql/commit/7e86d762d2659fe015b7a018cb1b40ed7039b1f2))
+
 # [1.5.0](https://github.com/Nam088/json-logic-to-sql/compare/v1.4.0...v1.5.0) (2025-12-17)
 
 
