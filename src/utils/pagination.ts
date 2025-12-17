@@ -1,4 +1,5 @@
 import type { FieldSchema, FilterSchema } from '../types';
+import type { PlaceholderStyle } from '../dialects/type';
 import { escapeIdentifier } from '../security/sanitizer';
 
 /**
@@ -22,6 +23,8 @@ export interface PaginationOptions {
   pageSize?: number;
   offset?: number;
   limit?: number;
+  /** Placeholder style for SQL parameters (default: 'dollar') */
+  placeholderStyle?: PlaceholderStyle;
 }
 
 export interface PaginationResult {
@@ -42,6 +45,36 @@ const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 100;
 
 /**
+ * Get placeholder string based on style
+ */
+function getPlaceholder(style: PlaceholderStyle, index: number): string {
+  switch (style) {
+    case 'question':
+      return '?';
+    case 'at':
+      return `@p${index}`;
+    case 'dollar':
+    default:
+      return `$${index}`;
+  }
+}
+
+/**
+ * Get param key based on style
+ */
+function getParamKey(style: PlaceholderStyle, index: number): string {
+  switch (style) {
+    case 'question':
+      return `p${index}`;
+    case 'at':
+      return `@p${index}`;
+    case 'dollar':
+    default:
+      return `$${index}`;
+  }
+}
+
+/**
  * Build pagination SQL clause (LIMIT/OFFSET)
  * @param options - Pagination options (page/pageSize or offset/limit)
  * @param maxPageSize - Maximum allowed page size (default: 100)
@@ -55,6 +88,8 @@ export function buildPagination(
   let offset: number;
   let limit: number;
   let page: number;
+
+  const placeholderStyle = options.placeholderStyle ?? 'dollar';
 
   if (options.offset !== undefined && options.limit !== undefined) {
     // Use raw offset/limit
@@ -72,15 +107,20 @@ export function buildPagination(
     offset = (page - 1) * pageSize;
   }
 
-  const limitParam = startIndex;
-  const offsetParam = startIndex + 1;
+  const limitParamIndex = startIndex;
+  const offsetParamIndex = startIndex + 1;
 
-  const params = { [`$${limitParam}`]: limit, [`$${offsetParam}`]: offset };
+  const limitPlaceholder = getPlaceholder(placeholderStyle, limitParamIndex);
+  const offsetPlaceholder = getPlaceholder(placeholderStyle, offsetParamIndex);
+  const limitKey = getParamKey(placeholderStyle, limitParamIndex);
+  const offsetKey = getParamKey(placeholderStyle, offsetParamIndex);
+
+  const params = { [limitKey]: limit, [offsetKey]: offset };
 
   return {
-    sql: `LIMIT $${limitParam} OFFSET $${offsetParam}`,
+    sql: `LIMIT ${limitPlaceholder} OFFSET ${offsetPlaceholder}`,
     params,
-    paramsArray: paramsToArray(params),
+    paramsArray: [limit, offset],
     meta: {
       page,
       pageSize: limit,
