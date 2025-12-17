@@ -1,6 +1,6 @@
 {
   "name": "@nam088/json-logic-to-sql",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "description": "A powerful, secure, and type-safe library to convert JSON Logic rules into SQL WHERE clauses with comprehensive schema validation and multi-dialect support",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

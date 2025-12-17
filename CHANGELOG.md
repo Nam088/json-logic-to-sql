@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/Nam088/json-logic-to-sql/compare/v1.6.0...v1.7.0) (2025-12-17)
+
+
+### Features
+
+* add support for range operators in SchemaValidator and enhance JsonLogicCompiler for array handling ([bc07d3f](https://github.com/Nam088/json-logic-to-sql/commit/bc07d3f4429d1ff6445ca43f868866a0bca27068))
+
 # [1.6.0](https://github.com/Nam088/json-logic-to-sql/compare/v1.5.0...v1.6.0) (2025-12-17)
 
 
