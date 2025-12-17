@@ -8,7 +8,7 @@ import type {
   FieldSchema,
   ComputedFieldSchema,
 } from './types';
-import { applyTransforms } from './utils/transforms';
+import { applyTransforms, applyValueTransforms } from './utils/transforms';
 import { paramsToArray } from './utils/pagination';
 import { SchemaValidator, SchemaValidationError } from './schema/validator';
 import { sanitizeInput, escapeIdentifier, validateParameterValue } from './security/sanitizer';
@@ -218,14 +218,25 @@ export class JsonLogicCompiler {
     this.validator.validateOperator(fieldName, operator);
 
     // Get value(s)
-    const value = operands.length > 1 ? operands[1] : null;
-    const value2 = operands.length > 2 ? operands[2] : null;
+    let value = operands.length > 1 ? operands[1] : null;
+    let value2 = operands.length > 2 ? operands[2] : null;
 
     // Validate value
     if (!UNARY_OPERATORS.includes(operator)) {
       if (value !== null) validateParameterValue(value);
       if (value2 !== null && value2 !== undefined) validateParameterValue(value2);
       this.validator.validateValue(fieldName, operator, value);
+    }
+
+    // Apply input transforms to values (e.g., lower, trim)
+    // Only apply to regular fields (not computed fields)
+    if ('transform' in fieldSchema && fieldSchema.transform?.input) {
+      if (value !== null) {
+        value = applyValueTransforms(value, fieldSchema.transform.input);
+      }
+      if (value2 !== null && value2 !== undefined) {
+        value2 = applyValueTransforms(value2, fieldSchema.transform.input);
+      }
     }
 
     // Build column reference
@@ -251,6 +262,18 @@ export class JsonLogicCompiler {
         return this.dialect.handleBetween(operator, column, [value, value2], context);
       }
 
+      // Handle 'contains' for array/jsonb fields BEFORE checking ARRAY_OPERATORS
+      if (operator === 'contains' && (fieldSchema.type === 'array' || fieldSchema.type === 'jsonb')) {
+        if (!Array.isArray(value)) {
+          throw new CompilerError(
+            `Operator 'contains' on array field '${fieldName}' requires an array value (subset check). ` +
+            `To check if array contains a single value, use 'any_of' operator.`
+          );
+        }
+        // Field type already set above
+        return this.dialect.handleArray(operator, column, value, context);
+      }
+
       if (ARRAY_OPERATORS.includes(operator)) {
         if (!Array.isArray(value)) {
           throw new CompilerError(`${operator} requires array value`);
@@ -274,20 +297,8 @@ export class JsonLogicCompiler {
       }
     }
 
-    // String operators
+    // String operators (contains for string fields only)
     if (['like', 'ilike', 'starts_with', 'ends_with', 'contains', 'regex'].includes(operator)) {
-      // Special handling for 'contains' which can be Array or String
-      if (operator === 'contains' && (fieldSchema.type === 'array' || fieldSchema.type === 'jsonb')) {
-         if (!Array.isArray(value)) {
-            throw new CompilerError(
-              `Operator 'contains' on array field '${fieldName}' requires an array value (subset check). ` +
-              `To check if array contains a single value, use 'any_of' operator.`
-            ); 
-         }
-         // Field type already set above
-         return this.dialect.handleArray(operator, column, value, context);
-      }
-
       if (typeof value !== 'string') {
         throw new CompilerError(`${operator} requires string value`);
       }
@@ -349,7 +360,45 @@ export class JsonLogicCompiler {
 
     // JSONB path
     if (regularField.jsonPath) {
-      return regularField.jsonPath;
+      let jsonPathExpr = regularField.jsonPath;
+      
+      // Auto-cast JSONB text values to appropriate types
+      // When using ->> operator, it returns text, so we need to cast for non-string types
+      if (regularField.type === 'boolean' && this.dialect.name === 'postgresql') {
+        // PostgreSQL: cast text to boolean
+        jsonPathExpr = `(${regularField.jsonPath})::boolean`;
+      } else if (regularField.type === 'number' || regularField.type === 'integer' || regularField.type === 'decimal') {
+        // Cast text to numeric for all dialects
+        if (this.dialect.name === 'postgresql') {
+          jsonPathExpr = `(${regularField.jsonPath})::numeric`;
+        } else if (this.dialect.name === 'mysql') {
+          jsonPathExpr = `CAST(${regularField.jsonPath} AS DECIMAL)`;
+        } else if (this.dialect.name === 'sqlite') {
+          jsonPathExpr = `CAST(${regularField.jsonPath} AS REAL)`;
+        }
+      } else if (regularField.type === 'date' || regularField.type === 'datetime' || regularField.type === 'timestamp') {
+        // Cast text to date/timestamp for proper comparison
+        if (this.dialect.name === 'postgresql') {
+          if (regularField.type === 'date') {
+            jsonPathExpr = `(${regularField.jsonPath})::date`;
+          } else {
+            jsonPathExpr = `(${regularField.jsonPath})::timestamp`;
+          }
+        } else if (this.dialect.name === 'mysql') {
+          if (regularField.type === 'date') {
+            jsonPathExpr = `CAST(${regularField.jsonPath} AS DATE)`;
+          } else {
+            jsonPathExpr = `CAST(${regularField.jsonPath} AS DATETIME)`;
+          }
+        } else if (this.dialect.name === 'sqlite') {
+          jsonPathExpr = `CAST(${regularField.jsonPath} AS TEXT)`;
+        }
+      } else if (regularField.type === 'uuid' && this.dialect.name === 'postgresql') {
+        // PostgreSQL: cast text to uuid
+        jsonPathExpr = `(${regularField.jsonPath})::uuid`;
+      }
+      
+      return jsonPathExpr;
     }
 
     // Regular column
@@ -360,9 +409,9 @@ export class JsonLogicCompiler {
       .map(part => this.dialect.quoteIdentifier(part))
       .join('.');
 
-    // Apply input transforms
+    // Apply input transforms (with dialect-specific support)
     if (regularField.transform?.input) {
-      column = applyTransforms(column, regularField.transform.input);
+      column = applyTransforms(column, regularField.transform.input, this.dialect.name);
     }
 
     return column;

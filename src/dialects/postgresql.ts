@@ -18,11 +18,25 @@ export class PostgresDialect extends BaseDialect {
         const placeholder = this.getParamPlaceholder(context.paramIndex);
         const paramKey = this.getParamKey(context.paramIndex);
         context.paramIndex++;
-        // Cast to JSONB for proper type handling (json_contains is always for JSONB)
-        const castPlaceholder = placeholder === '?' ? '?::jsonb' : `${placeholder}::jsonb`;
+        // For Knex (? placeholder), need to JSON.stringify array values
+        // For PostgreSQL ($N placeholder), can use cast
+        let paramValue: unknown = value;
+        let castPlaceholder: string;
+        
+        if (placeholder === '?') {
+          // Knex: convert array to JSON string, no cast needed (Knex handles it)
+          if (Array.isArray(value)) {
+            paramValue = JSON.stringify(value);
+          }
+          castPlaceholder = '?::jsonb';
+        } else {
+          // PostgreSQL native: use cast
+          castPlaceholder = `${placeholder}::jsonb`;
+        }
+        
         return {
           sql: `${column} @> ${castPlaceholder}`,
-          params: { [paramKey]: value },
+          params: { [paramKey]: paramValue },
         };
       case 'json_has_key':
         return this.simpleOp(column, '?', value, context);
@@ -58,6 +72,35 @@ export class PostgresDialect extends BaseDialect {
     const placeholder = this.getParamPlaceholder(context.paramIndex);
     const paramKey = this.getParamKey(context.paramIndex);
     context.paramIndex++;
+    
+    // For JSONB, use EXISTS with jsonb_array_elements_text
+    if (context.fieldType === 'jsonb') {
+      if (!Array.isArray(value)) {
+        throw new Error('any_of operator requires array value for JSONB fields');
+      }
+      
+      // Build array literal for PostgreSQL
+      const arrayPlaceholders: string[] = [];
+      const params: Record<string, unknown> = {};
+      
+      for (let i = 0; i < value.length; i++) {
+        const elemPlaceholder = this.getParamPlaceholder(context.paramIndex);
+        const elemKey = this.getParamKey(context.paramIndex);
+        context.paramIndex++;
+        arrayPlaceholders.push(elemPlaceholder);
+        params[elemKey] = value[i];
+      }
+      
+      const arrayLiteral = `ARRAY[${arrayPlaceholders.join(', ')}]`;
+      const sqlOp = operator === 'any_of' ? 'EXISTS' : 'NOT EXISTS';
+      
+      return {
+        sql: `${sqlOp} (SELECT 1 FROM jsonb_array_elements_text(${column}) AS elem WHERE elem = ANY(${arrayLiteral}))`,
+        params,
+      };
+    }
+    
+    // For PostgreSQL native arrays, use ANY/ALL
     const sqlOp = operator === 'any_of' ? '= ANY' : '<> ALL';
     return {
       sql: `${placeholder} ${sqlOp}(${column})`,
@@ -175,13 +218,28 @@ export class PostgresDialect extends BaseDialect {
     const placeholder = this.getParamPlaceholder(context.paramIndex);
     const paramKey = this.getParamKey(context.paramIndex);
     context.paramIndex++;
-    // Cast to JSONB only for JSONB columns, not PostgreSQL native arrays
-    const castPlaceholder = context.fieldType === 'jsonb'
-      ? (placeholder === '?' ? '?::jsonb' : `${placeholder}::jsonb`)
-      : placeholder;
+    
+    let paramValue: unknown = values;
+    let castPlaceholder: string;
+    
+    if (context.fieldType === 'jsonb') {
+      // For JSONB columns, cast to JSONB
+      if (placeholder === '?') {
+        // Knex: convert array to JSON string
+        paramValue = JSON.stringify(values);
+        castPlaceholder = '?::jsonb';
+      } else {
+        // PostgreSQL native: use cast
+        castPlaceholder = `${placeholder}::jsonb`;
+      }
+    } else {
+      // PostgreSQL native array: no cast needed
+      castPlaceholder = placeholder;
+    }
+    
     return {
       sql: `${column} @> ${castPlaceholder}`,
-      params: { [paramKey]: values },
+      params: { [paramKey]: paramValue },
     };
   }
 
@@ -193,13 +251,28 @@ export class PostgresDialect extends BaseDialect {
     const placeholder = this.getParamPlaceholder(context.paramIndex);
     const paramKey = this.getParamKey(context.paramIndex);
     context.paramIndex++;
-    // Cast to JSONB only for JSONB columns, not PostgreSQL native arrays
-    const castPlaceholder = context.fieldType === 'jsonb'
-      ? (placeholder === '?' ? '?::jsonb' : `${placeholder}::jsonb`)
-      : placeholder;
+    
+    let paramValue: unknown = values;
+    let castPlaceholder: string;
+    
+    if (context.fieldType === 'jsonb') {
+      // For JSONB columns, cast to JSONB
+      if (placeholder === '?') {
+        // Knex: convert array to JSON string
+        paramValue = JSON.stringify(values);
+        castPlaceholder = '?::jsonb';
+      } else {
+        // PostgreSQL native: use cast
+        castPlaceholder = `${placeholder}::jsonb`;
+      }
+    } else {
+      // PostgreSQL native array: no cast needed
+      castPlaceholder = placeholder;
+    }
+    
     return {
       sql: `${column} <@ ${castPlaceholder}`,
-      params: { [paramKey]: values },
+      params: { [paramKey]: paramValue },
     };
   }
 
@@ -208,15 +281,35 @@ export class PostgresDialect extends BaseDialect {
     values: unknown[],
     context: CompilerContext,
   ): SqlResult {
+    // For JSONB, use EXISTS with jsonb_array_elements_text (same as any_of)
+    if (context.fieldType === 'jsonb') {
+      // Build array literal for PostgreSQL
+      const arrayPlaceholders: string[] = [];
+      const params: Record<string, unknown> = {};
+      
+      for (let i = 0; i < values.length; i++) {
+        const elemPlaceholder = this.getParamPlaceholder(context.paramIndex);
+        const elemKey = this.getParamKey(context.paramIndex);
+        context.paramIndex++;
+        arrayPlaceholders.push(elemPlaceholder);
+        params[elemKey] = values[i];
+      }
+      
+      const arrayLiteral = `ARRAY[${arrayPlaceholders.join(', ')}]`;
+      
+      return {
+        sql: `EXISTS (SELECT 1 FROM jsonb_array_elements_text(${column}) AS elem WHERE elem = ANY(${arrayLiteral}))`,
+        params,
+      };
+    }
+    
+    // For PostgreSQL native arrays, use && operator
     const placeholder = this.getParamPlaceholder(context.paramIndex);
     const paramKey = this.getParamKey(context.paramIndex);
     context.paramIndex++;
-    // Cast to JSONB only for JSONB columns, not PostgreSQL native arrays
-    const castPlaceholder = context.fieldType === 'jsonb'
-      ? (placeholder === '?' ? '?::jsonb' : `${placeholder}::jsonb`)
-      : placeholder;
+    
     return {
-      sql: `${column} && ${castPlaceholder}`,
+      sql: `${column} && ${placeholder}`,
       params: { [paramKey]: values },
     };
   }

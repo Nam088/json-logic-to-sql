@@ -5,6 +5,7 @@ import { applyTransforms } from './transforms';
 export interface SelectOptions {
   fields?: string[];
   exclude?: string[];
+  dialect?: string; // Database dialect name (for dialect-specific transforms)
 }
 
 export interface SelectResult {
@@ -19,7 +20,7 @@ export function buildSelect(
   schema: FilterSchema,
   options: SelectOptions = {},
 ): SelectResult {
-  const { fields: requestedFields, exclude = [] } = options;
+  const { fields: requestedFields, exclude = [], dialect } = options;
 
   // Determine which fields to select
   let fieldsToSelect: string[];
@@ -49,7 +50,7 @@ export function buildSelect(
       throw new Error(`Field not selectable: ${fieldName}`);
     }
 
-    const column = buildColumnExpression(fieldName, field);
+    const column = buildColumnExpression(fieldName, field, dialect);
     parts.push(column);
   }
 
@@ -66,6 +67,7 @@ export function buildSelect(
 function buildColumnExpression(
   fieldName: string,
   field: FieldSchema | ComputedFieldSchema,
+  dialect?: string,
 ): string {
   // Computed field
   if ('computed' in field && field.computed) {
@@ -86,9 +88,9 @@ function buildColumnExpression(
     return `${escapeIdentifier(columnName)} AS ${escapeIdentifier(fieldName)}`;
   }
 
-  // Apply output transforms using shared utility
+  // Apply output transforms using shared utility (with dialect-specific support)
   if (regularField.transform?.output) {
-    const expr = applyTransforms(escapeIdentifier(columnName), regularField.transform.output);
+    const expr = applyTransforms(escapeIdentifier(columnName), regularField.transform.output, dialect);
     return `${expr} AS ${escapeIdentifier(fieldName)}`;
   }
 
