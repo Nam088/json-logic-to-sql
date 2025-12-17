@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/Nam088/json-logic-to-sql/compare/v1.1.0...v1.2.0) (2025-12-17)
+
+
+### Features
+
+* enhance JsonLogicCompiler with parameter placeholder style support and add paramsToArray utility for ordered parameter handling ([9d7fa15](https://github.com/Nam088/json-logic-to-sql/commit/9d7fa15e755d84cb10e331652d5c3fa24f81ebec))
+
 # [1.1.0](https://github.com/Nam088/json-logic-to-sql/compare/v1.0.2...v1.1.0) (2025-12-16)
 
 
