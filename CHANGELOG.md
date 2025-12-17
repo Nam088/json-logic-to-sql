@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/Nam088/json-logic-to-sql/compare/v1.3.0...v1.4.0) (2025-12-17)
+
+
+### Features
+
+* implement unique parameter keys for SQL dialects to enhance parameter handling ([8ebdabf](https://github.com/Nam088/json-logic-to-sql/commit/8ebdabfc8c6b1f988e41c5ce72d8241f562bb239))
+
 # [1.3.0](https://github.com/Nam088/json-logic-to-sql/compare/v1.2.0...v1.3.0) (2025-12-17)
 
 
