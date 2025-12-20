@@ -7,7 +7,8 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "@nam088/json-logic-to-sql": "^1.0.0"
+    "@nam088/json-logic-to-sql": "file:../../"
   }
 }
+
 

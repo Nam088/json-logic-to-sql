@@ -21,55 +21,55 @@ const DB_CONFIG = {
 const testSchema: FilterSchema = {
   fields: {
     // UUID
-    id: { type: 'uuid', operators: ['eq', 'ne', 'in', 'not_in'] },
+    id: { type: 'uuid', title: 'ID', inputType: 'text', operators: ['eq', 'ne', 'in', 'not_in'] },
     
     // String types
-    name: { type: 'string', operators: ['eq', 'ne', 'ilike', 'contains', 'starts_with', 'ends_with', 'regex'] },
-    email: { type: 'string', operators: ['eq', 'ilike', 'is_null', 'is_not_null'], nullable: true },
-    description: { type: 'text', operators: ['ilike', 'contains'] },
-    code: { type: 'string', operators: ['eq', 'starts_with'] },
+    name: { type: 'string', title: 'Name', inputType: 'text', operators: ['eq', 'ne', 'ilike', 'contains', 'starts_with', 'ends_with', 'regex'] },
+    email: { type: 'string', title: 'Email', inputType: 'text', operators: ['eq', 'ilike', 'is_null', 'is_not_null'], nullable: true },
+    description: { type: 'text', title: 'Description', inputType: 'textarea', operators: ['ilike', 'contains'] },
+    code: { type: 'string', title: 'Code', inputType: 'text', operators: ['eq', 'starts_with'] },
     
     // Integer types
-    age: { type: 'integer', operators: ['eq', 'ne', 'gt', 'gte', 'lt', 'lte', 'between', 'in'] },
-    rating: { type: 'integer', operators: ['eq', 'in', 'gt', 'lt', 'gte', 'lte'] },
-    views: { type: 'integer', operators: ['gt', 'gte', 'lt', 'lte', 'between'] },
+    age: { type: 'integer', title: 'Age', inputType: 'number', operators: ['eq', 'ne', 'gt', 'gte', 'lt', 'lte', 'between', 'in'] },
+    rating: { type: 'integer', title: 'Rating', inputType: 'number', operators: ['eq', 'in', 'gt', 'lt', 'gte', 'lte'] },
+    views: { type: 'integer', title: 'Views', inputType: 'number', operators: ['gt', 'gte', 'lt', 'lte', 'between'] },
     
     // Decimal types
-    score: { type: 'decimal', operators: ['eq', 'gt', 'gte', 'lt', 'lte', 'between'] },
-    price: { type: 'decimal', operators: ['gt', 'lt', 'between'] },
-    percentage: { type: 'decimal', operators: ['gte', 'lte'] },
-    average: { type: 'decimal', operators: ['gt', 'lt'] },
+    score: { type: 'decimal', title: 'Score', inputType: 'number', operators: ['eq', 'gt', 'gte', 'lt', 'lte', 'between'] },
+    price: { type: 'decimal', title: 'Price', inputType: 'number', operators: ['gt', 'lt', 'between'] },
+    percentage: { type: 'decimal', title: 'Percentage', inputType: 'number', operators: ['gte', 'lte'] },
+    average: { type: 'decimal', title: 'Average', inputType: 'number', operators: ['gt', 'lt'] },
     
     // Boolean
-    isActive: { type: 'boolean', operators: ['eq'], column: 'is_active' },
-    isVerified: { type: 'boolean', operators: ['eq', 'is_null', 'is_not_null'], column: 'is_verified', nullable: true },
+    isActive: { type: 'boolean', title: 'Is Active', inputType: 'checkbox', operators: ['eq'], column: 'is_active' },
+    isVerified: { type: 'boolean', title: 'Is Verified', inputType: 'checkbox', operators: ['eq', 'is_null', 'is_not_null'], column: 'is_verified', nullable: true },
     
     // Date/Time types
-    birthDate: { type: 'date', operators: ['eq', 'gt', 'lt', 'gte', 'lte', 'between'], column: 'birth_date' },
-    startTime: { type: 'timestamp', operators: ['gt', 'lt'], column: 'start_time' },
-    createdAt: { type: 'timestamp', operators: ['gt', 'lt', 'gte', 'lte', 'between'], column: 'created_at' },
-    updatedAt: { type: 'timestamp', operators: ['is_null', 'is_not_null', 'gt'], column: 'updated_at', nullable: true },
+    birthDate: { type: 'date', title: 'Birth Date', inputType: 'date', operators: ['eq', 'gt', 'lt', 'gte', 'lte', 'between'], column: 'birth_date' },
+    startTime: { type: 'timestamp', title: 'Start Time', inputType: 'datetime', operators: ['gt', 'lt'], column: 'start_time' },
+    createdAt: { type: 'timestamp', title: 'Created At', inputType: 'datetime', operators: ['gt', 'lt', 'gte', 'lte', 'between'], column: 'created_at' },
+    updatedAt: { type: 'timestamp', title: 'Updated At', inputType: 'datetime', operators: ['is_null', 'is_not_null', 'gt'], column: 'updated_at', nullable: true },
     
     // Array types - String
-    tags: { type: 'array', operators: ['any_of', 'not_any_of', 'contains', 'overlaps', 'contained_by'] },
-    categories: { type: 'array', operators: ['any_of', 'overlaps', 'contains'] },
+    tags: { type: 'array', title: 'Tags', inputType: 'multiselect', operators: ['any_of', 'not_any_of', 'contains', 'overlaps', 'contained_by'] },
+    categories: { type: 'array', title: 'Categories', inputType: 'multiselect', operators: ['any_of', 'overlaps', 'contains'] },
     
     // Array types - Numeric
-    scores: { type: 'array', operators: ['any_of', 'contains', 'overlaps'] },
-    ratings: { type: 'array', operators: ['any_of', 'contains'] },
+    scores: { type: 'array', title: 'Scores', inputType: 'multiselect', operators: ['any_of', 'contains', 'overlaps'] },
+    ratings: { type: 'array', title: 'Ratings', inputType: 'multiselect', operators: ['any_of', 'contains'] },
     
     // JSONB
-    metadata: { type: 'jsonb', operators: ['json_contains'] },
-    settings: { type: 'jsonb', operators: ['json_contains'] },
-    profile: { type: 'jsonb', operators: ['json_contains'] },
+    metadata: { type: 'jsonb', title: 'Metadata', inputType: 'json', operators: ['json_contains'] },
+    settings: { type: 'jsonb', title: 'Settings', inputType: 'json', operators: ['json_contains'] },
+    profile: { type: 'jsonb', title: 'Profile', inputType: 'json', operators: ['json_contains'] },
     
     // Enum-like string
-    status: { type: 'string', operators: ['eq', 'ne', 'in'], options: { items: [
+    status: { type: 'string', title: 'Status', inputType: 'select', operators: ['eq', 'ne', 'in'], options: { items: [
       { value: 'pending', label: 'Pending' },
       { value: 'active', label: 'Active' },
       { value: 'inactive', label: 'Inactive' },
     ]}},
-    priority: { type: 'string', operators: ['eq', 'in'], options: { items: [
+    priority: { type: 'string', title: 'Priority', inputType: 'select', operators: ['eq', 'in'], options: { items: [
       { value: 'low', label: 'Low' },
       { value: 'medium', label: 'Medium' },
       { value: 'high', label: 'High' },
@@ -487,9 +487,9 @@ describe('PostgreSQL Integration Tests', () => {
       const publicSchema: FilterSchema = {
         fields: {
           // Public name: userBirthDate -> DB: birth_date
-          userBirthDate: { type: 'date', operators: ['gt'] },
+          userBirthDate: { type: 'date', title: 'Birth Date', inputType: 'date', operators: ['gt'] },
           // Public name: activeStatus -> DB: is_active
-          activeStatus: { type: 'boolean', operators: ['eq'] }
+          activeStatus: { type: 'boolean', title: 'Active Status', inputType: 'checkbox', operators: ['eq'] }
         }
       };
 
@@ -510,11 +510,15 @@ describe('PostgreSQL Integration Tests', () => {
         fields: {
           userBirthDate: { 
             type: 'date', 
+            title: 'Birth Date',
+            inputType: 'date',
             operators: ['gt'], 
             column: 'birth_date' 
           },
           activeStatus: { 
             type: 'boolean', 
+            title: 'Active Status',
+            inputType: 'checkbox',
             operators: ['eq'], 
             column: 'is_active' 
           }
@@ -554,9 +558,9 @@ describe('PostgreSQL Integration Tests', () => {
       // 1. Define schema
       const publicSchema: FilterSchema = {
         fields: {
-          userName: { type: 'string', operators: ['eq'] },
-          postTitle: { type: 'string', operators: ['contains'] },
-          isPublished: { type: 'boolean', operators: ['eq'] }
+          userName: { type: 'string', title: 'User Name', inputType: 'text', operators: ['eq'] },
+          postTitle: { type: 'string', title: 'Post Title', inputType: 'text', operators: ['contains'] },
+          isPublished: { type: 'boolean', title: 'Is Published', inputType: 'checkbox', operators: ['eq'] }
         }
       };
 

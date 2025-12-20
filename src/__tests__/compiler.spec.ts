@@ -6,24 +6,34 @@ describe('JsonLogicCompiler', () => {
     fields: {
       id: {
         type: 'uuid',
+        title: 'ID',
+        inputType: 'text',
         operators: ['eq', 'ne', 'in', 'not_in'],
       },
       name: {
         type: 'string',
+        title: 'Name',
+        inputType: 'text',
         operators: ['eq', 'ne', 'contains', 'starts_with', 'ilike', 'in'],
       },
       email: {
         type: 'string',
+        title: 'Email',
+        inputType: 'text',
         operators: ['eq', 'ilike'],
         transform: { input: ['lower', 'trim'] },
       },
       age: {
         type: 'integer',
+        title: 'Age',
+        inputType: 'number',
         operators: ['eq', 'gt', 'gte', 'lt', 'lte', 'between', 'in'],
         constraints: { min: 0, max: 150 },
       },
       status: {
         type: 'string',
+        title: 'Status',
+        inputType: 'select',
         operators: ['eq', 'ne', 'in'],
         options: {
           items: [
@@ -34,20 +44,28 @@ describe('JsonLogicCompiler', () => {
       },
       isActive: {
         type: 'boolean',
+        title: 'Is Active',
+        inputType: 'checkbox',
         operators: ['eq', 'is_null', 'is_not_null'],
         nullable: true,
       },
       createdAt: {
         type: 'timestamp',
+        title: 'Created At',
+        inputType: 'datetime',
         column: 'created_at',
         operators: ['gt', 'gte', 'lt', 'lte', 'between'],
       },
       tags: {
         type: 'array',
+        title: 'Tags',
+        inputType: 'multiselect',
         operators: ['contains', 'overlaps'],
       },
       fullName: {
         type: 'string',
+        title: 'Full Name',
+        inputType: 'text',
         computed: true,
         expression: "first_name || ' ' || last_name",
         operators: ['ilike'],

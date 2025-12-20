@@ -23,6 +23,8 @@ const exhaustiveSchema: FilterSchema = {
     // UUID - all UUID operators
     id: { 
       type: 'uuid', 
+      title: 'ID',
+      inputType: 'text',
       operators: ['eq', 'ne', 'in', 'not_in', 'is_null', 'is_not_null'],
       nullable: true,
     },
@@ -30,6 +32,8 @@ const exhaustiveSchema: FilterSchema = {
     // STRING (VARCHAR) - all string operators
     name: { 
       type: 'string', 
+      title: 'Name',
+      inputType: 'text',
       operators: ['eq', 'ne', 'in', 'not_in', 'ilike', 'like', 'contains', 'starts_with', 'ends_with', 'regex', 'is_null', 'is_not_null'],
       nullable: true,
     },
@@ -37,6 +41,8 @@ const exhaustiveSchema: FilterSchema = {
     // TEXT - all text operators
     description: { 
       type: 'text', 
+      title: 'Description',
+      inputType: 'textarea',
       operators: ['eq', 'ne', 'ilike', 'like', 'contains', 'starts_with', 'ends_with', 'regex', 'is_null', 'is_not_null'],
       nullable: true,
     },
@@ -44,6 +50,8 @@ const exhaustiveSchema: FilterSchema = {
     // INTEGER - all numeric operators
     age: { 
       type: 'integer', 
+      title: 'Age',
+      inputType: 'number',
       operators: ['eq', 'ne', 'gt', 'gte', 'lt', 'lte', 'between', 'not_between', 'in', 'not_in', 'is_null', 'is_not_null'],
       nullable: true,
     },
@@ -51,6 +59,8 @@ const exhaustiveSchema: FilterSchema = {
     // DECIMAL - all decimal operators
     score: { 
       type: 'decimal', 
+      title: 'Score',
+      inputType: 'number',
       operators: ['eq', 'ne', 'gt', 'gte', 'lt', 'lte', 'between', 'is_null', 'is_not_null'],
       nullable: true,
     },
@@ -58,6 +68,8 @@ const exhaustiveSchema: FilterSchema = {
     // BOOLEAN - boolean operators
     isActive: { 
       type: 'boolean', 
+      title: 'Is Active',
+      inputType: 'checkbox',
       column: 'is_active',
       operators: ['eq', 'is_null', 'is_not_null'],
       nullable: true,
@@ -66,6 +78,8 @@ const exhaustiveSchema: FilterSchema = {
     // DATE - date operators
     birthDate: { 
       type: 'date', 
+      title: 'Birth Date',
+      inputType: 'date',
       column: 'birth_date',
       operators: ['eq', 'ne', 'gt', 'gte', 'lt', 'lte', 'between', 'is_null', 'is_not_null'],
       nullable: true,
@@ -74,6 +88,8 @@ const exhaustiveSchema: FilterSchema = {
     // TIMESTAMP - timestamp operators
     createdAt: { 
       type: 'timestamp', 
+      title: 'Created At',
+      inputType: 'datetime',
       column: 'created_at',
       operators: ['eq', 'ne', 'gt', 'gte', 'lt', 'lte', 'between', 'is_null', 'is_not_null'],
       nullable: true,
@@ -82,6 +98,8 @@ const exhaustiveSchema: FilterSchema = {
     // ARRAY VARCHAR - array operators
     tags: { 
       type: 'array', 
+      title: 'Tags',
+      inputType: 'multiselect',
       operators: ['any_of', 'not_any_of', 'contains', 'overlaps', 'contained_by', 'is_null', 'is_not_null'],
       nullable: true,
     },
@@ -89,6 +107,8 @@ const exhaustiveSchema: FilterSchema = {
     // ARRAY INTEGER - array operators
     scores: { 
       type: 'array', 
+      title: 'Scores',
+      inputType: 'multiselect',
       operators: ['any_of', 'not_any_of', 'overlaps', 'is_null', 'is_not_null'],
       nullable: true,
     },
@@ -96,6 +116,8 @@ const exhaustiveSchema: FilterSchema = {
     // JSONB - jsonb operators
     metadata: { 
       type: 'jsonb', 
+      title: 'Metadata',
+      inputType: 'json',
       operators: ['json_contains', 'is_null', 'is_not_null'],
       nullable: true,
     },

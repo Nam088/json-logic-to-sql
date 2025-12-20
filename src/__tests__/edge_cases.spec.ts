@@ -6,10 +6,10 @@ describe('Edge Cases', () => {
   const config: CompilerConfig = {
     schema: {
       fields: {
-        strField: { type: 'string', operators: ['eq', 'ne', 'like', 'in'], nullable: true },
-        numField: { type: 'number', operators: ['eq', 'gt', 'lt'] },
-        arrField: { type: 'array', operators: ['contains', 'overlaps'] },
-        dateField: { type: 'date', operators: ['eq'] },
+        strField: { type: 'string', title: 'String Field', inputType: 'text', operators: ['eq', 'ne', 'like', 'in'], nullable: true },
+        numField: { type: 'number', title: 'Number Field', inputType: 'number', operators: ['eq', 'gt', 'lt'] },
+        arrField: { type: 'array', title: 'Array Field', inputType: 'multiselect', operators: ['contains', 'overlaps'] },
+        dateField: { type: 'date', title: 'Date Field', inputType: 'date', operators: ['eq'] },
       },
       settings: {
         maxDepth: 3,
@@ -72,6 +72,8 @@ describe('Edge Cases', () => {
            fields: {
              weirdField: { 
                type: 'string', 
+               title: 'Weird Field',
+               inputType: 'text',
                operators: ['eq'],
                column: 'weird"column' // malicious column name attempt
              }
@@ -165,7 +167,7 @@ describe('Edge Cases', () => {
        const reservedConfig: CompilerConfig = {
          schema: {
             fields: {
-               "select": { type: 'string', operators: ['eq'] }
+               "select": { type: 'string', title: 'Select', inputType: 'text', operators: ['eq'] }
             }
          },
          dialect: 'postgresql'

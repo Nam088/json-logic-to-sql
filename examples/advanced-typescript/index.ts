@@ -22,6 +22,8 @@ const schema: FilterSchema = {
   fields: {
     firstName: {
       type: 'string',
+      title: 'First Name',
+      inputType: 'text',
       operators: ['eq', 'like', 'ilike', 'in'],
       column: 'first_name',
       selectable: true,
@@ -29,6 +31,8 @@ const schema: FilterSchema = {
     },
     lastName: {
       type: 'string',
+      title: 'Last Name',
+      inputType: 'text',
       operators: ['eq', 'like'],
       column: 'last_name',
       selectable: true,
@@ -36,6 +40,8 @@ const schema: FilterSchema = {
     },
     fullName: {
       type: 'string',
+      title: 'Full Name',
+      inputType: 'text',
       operators: ['like', 'ilike'],
       computed: true,
       expression: "first_name || ' ' || last_name",
@@ -44,6 +50,8 @@ const schema: FilterSchema = {
     },
     email: {
       type: 'string',
+      title: 'Email',
+      inputType: 'text',
       operators: ['eq', 'like', 'ilike'],
       transform: {
         input: 'lower',
@@ -53,6 +61,8 @@ const schema: FilterSchema = {
     },
     age: {
       type: 'number',
+      title: 'Age',
+      inputType: 'number',
       operators: ['eq', 'gt', 'lt', 'gte', 'lte', 'between'],
       constraints: {
         min: 0,
@@ -63,6 +73,8 @@ const schema: FilterSchema = {
     },
     ageGroup: {
       type: 'string',
+      title: 'Age Group',
+      inputType: 'text',
       operators: ['eq', 'in'],
       computed: true,
       expression: "CASE WHEN age < 18 THEN 'minor' WHEN age < 65 THEN 'adult' ELSE 'senior' END",
@@ -70,6 +82,8 @@ const schema: FilterSchema = {
     },
     status: {
       type: 'string',
+      title: 'Status',
+      inputType: 'select',
       operators: ['eq', 'in', 'ne'],
       options: {
         items: [
@@ -84,6 +98,8 @@ const schema: FilterSchema = {
     },
     createdAt: {
       type: 'datetime',
+      title: 'Created At',
+      inputType: 'datetime',
       operators: ['gt', 'lt', 'gte', 'lte', 'between'],
       column: 'created_at',
       selectable: true,
@@ -175,18 +191,26 @@ const publicSchema: FilterSchema = {
   fields: {
     userName: {
       type: 'string',
+      title: 'User Name',
+      inputType: 'text',
       operators: ['eq', 'like', 'ilike'],
     },
     userEmail: {
       type: 'string',
+      title: 'User Email',
+      inputType: 'text',
       operators: ['eq', 'like'],
     },
     userAge: {
       type: 'number',
+      title: 'User Age',
+      inputType: 'number',
       operators: ['eq', 'gt', 'lt', 'between'],
     },
     accountStatus: {
       type: 'string',
+      title: 'Account Status',
+      inputType: 'select',
       operators: ['eq', 'in'],
     },
   },

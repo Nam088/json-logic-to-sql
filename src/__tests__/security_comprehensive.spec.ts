@@ -6,10 +6,10 @@ describe('Comprehensive Security Suite', () => {
   const config: CompilerConfig = {
     schema: {
       fields: {
-        strField: { type: 'string', operators: ['eq', 'like', 'in'], nullable: true },
-        numField: { type: 'number', operators: ['eq', 'gt', 'lt'] },
-        tags: { type: 'array', operators: ['contains'] },
-        meta: { type: 'jsonb', operators: ['eq'] }
+        strField: { type: 'string', title: 'String Field', inputType: 'text', operators: ['eq', 'like', 'in'], nullable: true },
+        numField: { type: 'number', title: 'Number Field', inputType: 'number', operators: ['eq', 'gt', 'lt'] },
+        tags: { type: 'array', title: 'Tags', inputType: 'multiselect', operators: ['contains'] },
+        meta: { type: 'jsonb', title: 'Meta', inputType: 'json', operators: ['eq'] }
       },
       settings: {
         maxDepth: 5,
@@ -42,6 +42,8 @@ describe('Comprehensive Security Suite', () => {
            fields: {
              badCol: {
                type: 'string',
+               title: 'Bad Column',
+               inputType: 'text',
                operators: ['eq'],
                column: 'user_data; DROP TABLE users; --'
              }

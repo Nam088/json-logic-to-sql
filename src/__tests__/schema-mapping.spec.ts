@@ -9,10 +9,10 @@ import type { FilterSchema } from '../types';
 describe('Schema Mapping Utilities', () => {
   const baseSchema: FilterSchema = {
     fields: {
-      tags: { type: 'array', operators: ['contains'] },
-      priority: { type: 'string', operators: ['eq'] },
-      fullName: { type: 'string', operators: ['ilike'] },
-      simple: { type: 'integer', operators: ['eq'] },
+      tags: { type: 'array', title: 'Tags', inputType: 'multiselect', operators: ['contains'] },
+      priority: { type: 'string', title: 'Priority', inputType: 'select', operators: ['eq'] },
+      fullName: { type: 'string', title: 'Full Name', inputType: 'text', operators: ['ilike'] },
+      simple: { type: 'integer', title: 'Simple', inputType: 'number', operators: ['eq'] },
     },
   };
 

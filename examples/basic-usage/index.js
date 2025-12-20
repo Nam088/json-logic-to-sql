@@ -7,16 +7,22 @@ const schema = {
   fields: {
     firstName: {
       type: 'string',
+      title: 'First Name',
+      inputType: 'text',
       operators: ['eq', 'ne', 'like', 'ilike'],
       column: 'first_name',
     },
     lastName: {
       type: 'string',
+      title: 'Last Name',
+      inputType: 'text',
       operators: ['eq', 'like'],
       column: 'last_name',
     },
     age: {
       type: 'number',
+      title: 'Age',
+      inputType: 'number',
       operators: ['eq', 'gt', 'lt', 'gte', 'lte', 'between'],
       constraints: {
         min: 0,
@@ -25,6 +31,8 @@ const schema = {
     },
     email: {
       type: 'string',
+      title: 'Email',
+      inputType: 'text',
       operators: ['eq', 'like', 'ilike'],
       transform: {
         input: 'lower',
@@ -32,6 +40,8 @@ const schema = {
     },
     status: {
       type: 'string',
+      title: 'Status',
+      inputType: 'select',
       operators: ['eq', 'in', 'ne'],
       options: {
         items: [
@@ -44,10 +54,14 @@ const schema = {
     },
     country: {
       type: 'string',
+      title: 'Country',
+      inputType: 'text',
       operators: ['eq', 'in'],
     },
     createdAt: {
       type: 'datetime',
+      title: 'Created At',
+      inputType: 'datetime',
       operators: ['gt', 'lt', 'gte', 'lte', 'between'],
       column: 'created_at',
     },
@@ -239,4 +253,5 @@ LIMIT 10;
 }
 
 console.log('\n✅ All examples completed!');
+
 

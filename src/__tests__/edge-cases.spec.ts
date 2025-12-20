@@ -18,11 +18,13 @@ import type { FilterSchema, JsonLogicRule } from '../types';
 describe('Edge Cases', () => {
   const testSchema: FilterSchema = {
     fields: {
-      id: { type: 'uuid', operators: ['eq', 'in', 'not_in'] },
-      name: { type: 'string', operators: ['eq', 'ne', 'in', 'not_in', 'contains'] },
-      age: { type: 'integer', operators: ['eq', 'gt', 'gte', 'lt', 'lte', 'between', 'in'] },
+      id: { type: 'uuid', title: 'ID', inputType: 'text', operators: ['eq', 'in', 'not_in'] },
+      name: { type: 'string', title: 'Name', inputType: 'text', operators: ['eq', 'ne', 'in', 'not_in', 'contains'] },
+      age: { type: 'integer', title: 'Age', inputType: 'number', operators: ['eq', 'gt', 'gte', 'lt', 'lte', 'between', 'in'] },
       status: {
         type: 'string',
+        title: 'Status',
+        inputType: 'select',
         operators: ['eq', 'ne', 'in', 'not_in'],
         options: {
           items: [
@@ -32,10 +34,10 @@ describe('Edge Cases', () => {
           ],
         },
       },
-      isActive: { type: 'boolean', operators: ['eq', 'is_null', 'is_not_null'], nullable: true },
-      tags: { type: 'array', operators: ['contains', 'overlaps', 'any_of', 'not_any_of'] },
-      score: { type: 'decimal', operators: ['eq', 'gt', 'lt', 'between'] },
-      createdAt: { type: 'timestamp', column: 'created_at', operators: ['gt', 'lt', 'between'] },
+      isActive: { type: 'boolean', title: 'Is Active', inputType: 'checkbox', operators: ['eq', 'is_null', 'is_not_null'], nullable: true },
+      tags: { type: 'array', title: 'Tags', inputType: 'multiselect', operators: ['contains', 'overlaps', 'any_of', 'not_any_of'] },
+      score: { type: 'decimal', title: 'Score', inputType: 'number', operators: ['eq', 'gt', 'lt', 'between'] },
+      createdAt: { type: 'timestamp', title: 'Created At', inputType: 'datetime', column: 'created_at', operators: ['gt', 'lt', 'between'] },
     },
     settings: {
       maxDepth: 5,
@@ -569,7 +571,7 @@ describe('Edge Cases', () => {
     it('should throw for non-sortable field', () => {
       const schemaWithNonSortable: FilterSchema = {
         fields: {
-          name: { type: 'string', operators: ['eq'], sortable: false },
+          name: { type: 'string', title: 'Name', inputType: 'text', operators: ['eq'], sortable: false },
         },
       };
 
@@ -595,8 +597,8 @@ describe('Edge Cases', () => {
     it('should return * for no selectable fields', () => {
       const schemaAllNonSelectable: FilterSchema = {
         fields: {
-          password: { type: 'string', operators: ['eq'], selectable: false },
-          secret: { type: 'string', operators: ['eq'], selectable: false },
+          password: { type: 'string', title: 'Password', inputType: 'password', operators: ['eq'], selectable: false },
+          secret: { type: 'string', title: 'Secret', inputType: 'text', operators: ['eq'], selectable: false },
         },
       };
 
@@ -615,8 +617,8 @@ describe('Edge Cases', () => {
     it('should throw for non-selectable field in fields list', () => {
       const schemaWithNonSelectable: FilterSchema = {
         fields: {
-          name: { type: 'string', operators: ['eq'] },
-          password: { type: 'string', operators: ['eq'], selectable: false },
+          name: { type: 'string', title: 'Name', inputType: 'text', operators: ['eq'] },
+          password: { type: 'string', title: 'Password', inputType: 'password', operators: ['eq'], selectable: false },
         },
       };
 

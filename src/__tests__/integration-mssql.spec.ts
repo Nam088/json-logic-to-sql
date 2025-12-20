@@ -1,4 +1,3 @@
-
 import sql from 'mssql';
 import { JsonLogicCompiler } from '../compiler';
 import { FilterSchema } from '../types';
@@ -17,19 +16,19 @@ describe('MSSQL Integration (Exhaustive)', () => {
   const testSchema: FilterSchema = {
     fields: {
       // String types
-      name: { type: 'string', operators: ['eq', 'ne', 'like', 'ilike', 'contains', 'starts_with', 'ends_with'] },
-      email: { type: 'string', operators: ['eq', 'is_null', 'is_not_null', 'starts_with', 'ends_with'], nullable: true },
+      name: { type: 'string', title: 'Name', inputType: 'text', operators: ['eq', 'ne', 'like', 'ilike', 'contains', 'starts_with', 'ends_with'] },
+      email: { type: 'string', title: 'Email', inputType: 'text', operators: ['eq', 'is_null', 'is_not_null', 'starts_with', 'ends_with'], nullable: true },
       
       // Number types
-      age: { type: 'number', operators: ['eq', 'ne', 'gt', 'gte', 'lt', 'lte', 'between', 'in', 'not_in'] },
-      score: { type: 'number', operators: ['eq', 'gt', 'lt'] }, // float
+      age: { type: 'number', title: 'Age', inputType: 'number', operators: ['eq', 'ne', 'gt', 'gte', 'lt', 'lte', 'between', 'in', 'not_in'] },
+      score: { type: 'number', title: 'Score', inputType: 'number', operators: ['eq', 'gt', 'lt'] }, // float
       
       // Boolean
-      active: { type: 'boolean', operators: ['eq'] },
-      verified: { type: 'boolean', operators: ['is_null', 'eq'], nullable: true },
+      active: { type: 'boolean', title: 'Active', inputType: 'checkbox', operators: ['eq'] },
+      verified: { type: 'boolean', title: 'Verified', inputType: 'checkbox', operators: ['is_null', 'eq'], nullable: true },
       
       // Date
-      joinedAt: { type: 'date', operators: ['gt', 'lt', 'between', 'gte', 'lte'] },
+      joinedAt: { type: 'date', title: 'Joined At', inputType: 'date', operators: ['gt', 'lt', 'between', 'gte', 'lte'] },
       
       // JSON (Not fully supported in dialect yet, but let's test basic string operators on nvarchar or fail gracefully)
       // tags: { type: 'json', operators: ['json_contains'] } 

@@ -114,4 +114,14 @@ export abstract class BaseDialect implements Dialect {
     // For now throwing error, specific dialects must implement if supported
     throw new Error(`Operator ${operator} not supported in ${this.name} dialect`);
   }
+
+  handleAnyIlike(
+    column: string,
+    value: string,
+    context: CompilerContext,
+  ): SqlResult {
+    // Default implementation throws error - only PostgreSQL supports this
+    // This uses EXISTS (SELECT 1 FROM unnest(column) AS x WHERE x ILIKE ?)
+    throw new Error(`Operator 'any_ilike' not supported in ${this.name} dialect (PostgreSQL only)`);
+  }
 }

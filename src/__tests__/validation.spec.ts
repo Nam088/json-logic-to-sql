@@ -4,9 +4,9 @@ import { FilterSchema } from '../types';
 describe('Dialect Validation', () => {
   const schema: FilterSchema = {
     fields: {
-      tags: { type: 'array', operators: ['contains', 'overlaps', 'contained_by', 'in'] },
-      meta: { type: 'jsonb', operators: ['json_contains', 'json_has_key'] },
-      name: { type: 'string', operators: ['regex'] },
+      tags: { type: 'array', title: 'Tags', inputType: 'multiselect', operators: ['contains', 'overlaps', 'contained_by', 'in'] },
+      meta: { type: 'jsonb', title: 'Meta', inputType: 'json', operators: ['json_contains', 'json_has_key'] },
+      name: { type: 'string', title: 'Name', inputType: 'text', operators: ['regex'] },
     },
   };
 

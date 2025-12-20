@@ -105,6 +105,12 @@ export interface FieldSchema {
   type: FieldType;
   operators: Operator[];
   
+  /** Display title for the field (used in UI) */
+  title: string;
+  
+  /** Input type for UI rendering */
+  inputType: string;
+  
   /** DB column name if different from field name */
   column?: string;
   
@@ -175,6 +181,7 @@ export type Operator =
   | 'overlaps'
   | 'any_of'      // value = ANY(column) - check if value is in array column
   | 'not_any_of'  // value <> ALL(column) - check if value is NOT in array column
+  | 'any_ilike'   // EXISTS (SELECT 1 FROM unnest(column) AS x WHERE x ILIKE value) - ILIKE search in varchar[]/text[]
   // String
   | 'like'
   | 'ilike'

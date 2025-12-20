@@ -5,7 +5,7 @@ describe('Strict Contains Behavior', () => {
   const config: CompilerConfig = {
     schema: {
       fields: {
-        tags: { type: 'array', operators: ['contains'] },
+        tags: { type: 'array', title: 'Tags', inputType: 'multiselect', operators: ['contains'] },
       },
       settings: {
         defaultOperator: 'eq',
@@ -30,7 +30,7 @@ describe('Strict Contains Behavior', () => {
     const configJsonb: CompilerConfig = {
       schema: {
         fields: {
-          data: { type: 'jsonb', operators: ['contains'] },
+          data: { type: 'jsonb', title: 'Data', inputType: 'json', operators: ['contains'] },
         },
       },
       dialect: 'postgresql',

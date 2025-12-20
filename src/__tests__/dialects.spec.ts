@@ -4,10 +4,10 @@ import { FilterSchema } from '../types';
   describe('Dialect Support', () => {
   const schema: FilterSchema = {
     fields: {
-      name: { type: 'string', operators: ['eq', 'like', 'regex', 'contains'] },
-      age: { type: 'number', operators: ['eq', 'gt', 'between'] },
-      tags: { type: 'array', operators: ['in', 'contains'] },
-      meta: { type: 'jsonb', operators: ['json_contains'] },
+      name: { type: 'string', title: 'Name', inputType: 'text', operators: ['eq', 'like', 'regex', 'contains'] },
+      age: { type: 'number', title: 'Age', inputType: 'number', operators: ['eq', 'gt', 'between'] },
+      tags: { type: 'array', title: 'Tags', inputType: 'multiselect', operators: ['in', 'contains'] },
+      meta: { type: 'jsonb', title: 'Meta', inputType: 'json', operators: ['json_contains'] },
     },
   };
 

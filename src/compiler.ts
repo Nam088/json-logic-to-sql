@@ -297,6 +297,14 @@ export class JsonLogicCompiler {
       }
     }
 
+    // Array ILIKE search operator (for varchar[]/text[] columns)
+    if (operator === 'any_ilike') {
+      if (typeof value !== 'string') {
+        throw new CompilerError(`${operator} requires string value`);
+      }
+      return this.dialect.handleAnyIlike(column, value, context);
+    }
+
     // String operators (contains for string fields only)
     if (['like', 'ilike', 'starts_with', 'ends_with', 'contains', 'regex'].includes(operator)) {
       if (typeof value !== 'string') {

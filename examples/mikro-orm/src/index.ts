@@ -96,9 +96,9 @@ async function main() {
   const testConfig: CompilerConfig = {
     schema: {
       fields: {
-        name: { type: 'string', operators: ['eq', 'in'] },
-        age: { type: 'number', operators: ['eq', 'gt', 'lt'] },
-        status: { type: 'string', operators: ['eq'] },
+        name: { type: 'string', title: 'Name', inputType: 'text', operators: ['eq', 'in'] },
+        age: { type: 'number', title: 'Age', inputType: 'number', operators: ['eq', 'gt', 'lt'] },
+        status: { type: 'string', title: 'Status', inputType: 'text', operators: ['eq'] },
       },
     },
     dialect: 'postgresql', // Use postgresql to show $N style
@@ -130,13 +130,15 @@ async function main() {
   const config: CompilerConfig = {
     schema: {
       fields: {
-        firstName: { type: 'string', operators: ['eq', 'like', 'in'], column: 'first_name' },
-        lastName: { type: 'string', operators: ['eq', 'like'], column: 'last_name' },
-        age: { type: 'number', operators: ['gt', 'lt', 'gte', 'lte', 'eq'] },
-        email: { type: 'string', operators: ['eq'] },
-        isActive: { type: 'boolean', operators: ['eq'], column: 'is_active', nullable: true },
+        firstName: { type: 'string', title: 'First Name', inputType: 'text', operators: ['eq', 'like', 'in'], column: 'first_name' },
+        lastName: { type: 'string', title: 'Last Name', inputType: 'text', operators: ['eq', 'like'], column: 'last_name' },
+        age: { type: 'number', title: 'Age', inputType: 'number', operators: ['gt', 'lt', 'gte', 'lte', 'eq'] },
+        email: { type: 'string', title: 'Email', inputType: 'text', operators: ['eq'] },
+        isActive: { type: 'boolean', title: 'Active', inputType: 'checkbox', operators: ['eq'], column: 'is_active', nullable: true },
         fullName: { 
           type: 'string', 
+          title: 'Full Name',
+          inputType: 'text',
           operators: ['like'], 
           computed: true, 
           expression: "first_name || ' ' || last_name" // SQLite concat

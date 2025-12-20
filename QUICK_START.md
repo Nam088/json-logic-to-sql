@@ -262,3 +262,4 @@ You're safe by default!
 - Issues: https://github.com/nam088/json-logic-to-sql/issues
 - npm: https://www.npmjs.com/package/@nam088/json-logic-to-sql
 
+

@@ -10,19 +10,19 @@ describe('SQLite Integration (Exhaustive)', () => {
   const schema: FilterSchema = {
     fields: {
       // String types
-      name: { type: 'string', operators: ['eq', 'ne', 'like', 'ilike', 'contains', 'starts_with', 'ends_with', 'regex'] },
-      email: { type: 'string', operators: ['eq', 'is_null', 'is_not_null', 'regex'], nullable: true },
+      name: { type: 'string', title: 'Name', inputType: 'text', operators: ['eq', 'ne', 'like', 'ilike', 'contains', 'starts_with', 'ends_with', 'regex'] },
+      email: { type: 'string', title: 'Email', inputType: 'text', operators: ['eq', 'is_null', 'is_not_null', 'regex'], nullable: true },
       
       // Number types
-      age: { type: 'number', operators: ['eq', 'ne', 'gt', 'gte', 'lt', 'lte', 'between', 'in', 'not_in'] },
-      score: { type: 'number', operators: ['gt', 'lt'] },
+      age: { type: 'number', title: 'Age', inputType: 'number', operators: ['eq', 'ne', 'gt', 'gte', 'lt', 'lte', 'between', 'in', 'not_in'] },
+      score: { type: 'number', title: 'Score', inputType: 'number', operators: ['gt', 'lt'] },
       
       // Boolean type
-      active: { type: 'boolean', operators: ['eq'] },
-      verified: { type: 'boolean', operators: ['eq', 'is_null'], nullable: true },
+      active: { type: 'boolean', title: 'Active', inputType: 'checkbox', operators: ['eq'] },
+      verified: { type: 'boolean', title: 'Verified', inputType: 'checkbox', operators: ['eq', 'is_null'], nullable: true },
       
       // Date type (stored as TEXT in SQLite)
-      joinedAt: { type: 'date', operators: ['gt', 'lt', 'gte', 'lte', 'between'] },
+      joinedAt: { type: 'date', title: 'Joined At', inputType: 'date', operators: ['gt', 'lt', 'gte', 'lte', 'between'] },
     },
     settings: {
       paramStyle: 'positional',
@@ -309,9 +309,9 @@ describe('SQLite Integration (Exhaustive)', () => {
           // 1. Define Public Schema
           const publicSchema: FilterSchema = {
             fields: {
-              userName: { type: 'string', operators: ['eq'] },
-              postTitle: { type: 'string', operators: ['contains'] },
-              published: { type: 'boolean', operators: ['eq'] }
+              userName: { type: 'string', title: 'User Name', inputType: 'text', operators: ['eq'] },
+              postTitle: { type: 'string', title: 'Post Title', inputType: 'text', operators: ['contains'] },
+              published: { type: 'boolean', title: 'Published', inputType: 'checkbox', operators: ['eq'] }
             }
           };
 

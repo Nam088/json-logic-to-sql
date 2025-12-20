@@ -8,11 +8,12 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@nam088/json-logic-to-sql": "^1.0.0"
+    "@nam088/json-logic-to-sql": "file:../../"
   },
   "devDependencies": {
     "tsx": "^4.7.0",
     "typescript": "^5.3.0"
   }
 }
+
 

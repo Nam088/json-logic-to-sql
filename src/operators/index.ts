@@ -40,6 +40,7 @@ export const OPERATOR_TO_SQL: Record<Operator, string> = {
   overlaps: '&&',
   any_of: '= ANY',
   not_any_of: '<> ALL',
+  any_ilike: 'EXISTS', // Handled by dialect.handleAnyIlike()
   like: 'LIKE',
   ilike: 'ILIKE',
   starts_with: 'LIKE',

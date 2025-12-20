@@ -5,13 +5,15 @@ import type { FilterSchema } from '../types';
 describe('Utilities', () => {
   const testSchema: FilterSchema = {
     fields: {
-      id: { type: 'uuid', operators: ['eq'] },
-      name: { type: 'string', operators: ['eq'] },
-      email: { type: 'string', operators: ['eq'], column: 'email_address' },
-      createdAt: { type: 'timestamp', column: 'created_at', operators: ['gt'] },
-      password: { type: 'string', operators: ['eq'], selectable: false },
+      id: { type: 'uuid', title: 'ID', inputType: 'text', operators: ['eq'] },
+      name: { type: 'string', title: 'Name', inputType: 'text', operators: ['eq'] },
+      email: { type: 'string', title: 'Email', inputType: 'text', operators: ['eq'], column: 'email_address' },
+      createdAt: { type: 'timestamp', title: 'Created At', inputType: 'datetime', column: 'created_at', operators: ['gt'] },
+      password: { type: 'string', title: 'Password', inputType: 'password', operators: ['eq'], selectable: false },
       fullName: {
         type: 'string',
+        title: 'Full Name',
+        inputType: 'text',
         computed: true,
         expression: "first_name || ' ' || last_name",
         operators: ['ilike'],

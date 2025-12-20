@@ -4,18 +4,22 @@ import type { FilterSchema } from '../types';
 describe('SchemaValidator', () => {
   const testSchema: FilterSchema = {
     fields: {
-      id: { type: 'uuid', operators: ['eq', 'in'] },
-      name: { type: 'string', operators: ['eq', 'ilike'], constraints: { minLength: 2, maxLength: 50 } },
-      age: { type: 'integer', operators: ['eq', 'gt', 'lt'], constraints: { min: 0, max: 150 } },
-      email: { type: 'string', operators: ['eq'], nullable: true },
+      id: { type: 'uuid', title: 'ID', inputType: 'text', operators: ['eq', 'in'] },
+      name: { type: 'string', title: 'Name', inputType: 'text', operators: ['eq', 'ilike'], constraints: { minLength: 2, maxLength: 50 } },
+      age: { type: 'integer', title: 'Age', inputType: 'number', operators: ['eq', 'gt', 'lt'], constraints: { min: 0, max: 150 } },
+      email: { type: 'string', title: 'Email', inputType: 'text', operators: ['eq'], nullable: true },
       status: {
         type: 'string',
+        title: 'Status',
+        inputType: 'select',
         operators: ['eq', 'in'],
         options: { items: [{ value: 'active', label: 'Active' }, { value: 'inactive', label: 'Inactive' }] },
       },
-      secretField: { type: 'string', operators: ['eq'], filterable: false },
+      secretField: { type: 'string', title: 'Secret', inputType: 'text', operators: ['eq'], filterable: false },
       birthDate: {
         type: 'date',
+        title: 'Birth Date',
+        inputType: 'date',
         operators: ['eq', 'gt'],
         constraints: {
           dateFormat: 'YYYY-MM-DD',
@@ -23,11 +27,11 @@ describe('SchemaValidator', () => {
           maxDate: '2024-12-31',
         },
       },
-      createdAt: { type: 'timestamp', operators: ['gt', 'lt'] },
-      isActive: { type: 'boolean', operators: ['eq'] },
-      score: { type: 'decimal', operators: ['eq', 'gt'] },
-      tags: { type: 'array', operators: ['contains'], constraints: { minItems: 1, maxItems: 10 } },
-      meta: { type: 'jsonb', operators: ['json_contains'] },
+      createdAt: { type: 'timestamp', title: 'Created At', inputType: 'datetime', operators: ['gt', 'lt'] },
+      isActive: { type: 'boolean', title: 'Is Active', inputType: 'checkbox', operators: ['eq'] },
+      score: { type: 'decimal', title: 'Score', inputType: 'number', operators: ['eq', 'gt'] },
+      tags: { type: 'array', title: 'Tags', inputType: 'multiselect', operators: ['contains'], constraints: { minItems: 1, maxItems: 10 } },
+      meta: { type: 'jsonb', title: 'Meta', inputType: 'json', operators: ['json_contains'] },
     },
     settings: { strict: true },
   };

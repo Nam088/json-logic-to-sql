@@ -71,6 +71,15 @@ export interface Dialect {
   ): SqlResult;
 
   /**
+   * Handle any_ilike operator for ILIKE search on varchar[]/text[] arrays
+   */
+  handleAnyIlike(
+    column: string,
+    value: string,
+    context: CompilerContext,
+  ): SqlResult;
+
+  /**
    * Handle string operators: like, ilike, starts_with, ends_with, contains, regex
    */
   handleString(

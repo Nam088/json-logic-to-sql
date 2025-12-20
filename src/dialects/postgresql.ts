@@ -108,6 +108,30 @@ export class PostgresDialect extends BaseDialect {
     };
   }
 
+  /**
+   * Handles ILIKE search on varchar[]/text[] array columns.
+   * Generates: EXISTS (SELECT 1 FROM unnest(column) AS x WHERE x ILIKE ?)
+   *
+   * @param {string} column - Column name
+   * @param {string} value - Search pattern (e.g., '%foo%')
+   * @param {CompilerContext} context - Compiler context
+   * @returns {SqlResult} SQL result with EXISTS clause
+   */
+  handleAnyIlike(
+    column: string,
+    value: string,
+    context: CompilerContext,
+  ): SqlResult {
+    const placeholder = this.getParamPlaceholder(context.paramIndex);
+    const paramKey = this.getParamKey(context.paramIndex);
+    context.paramIndex++;
+
+    return {
+      sql: `EXISTS (SELECT 1 FROM unnest(${column}) AS x WHERE x ILIKE ${placeholder})`,
+      params: { [paramKey]: value },
+    };
+  }
+
   handleString(
     operator: Operator,
     column: string,
