@@ -74,6 +74,7 @@ export interface Dialect {
    * Handle any_ilike operator for ILIKE search on varchar[]/text[] arrays
    */
   handleAnyIlike(
+    operator: Operator,
     column: string,
     value: string,
     context: CompilerContext,

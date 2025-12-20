@@ -118,6 +118,7 @@ export class PostgresDialect extends BaseDialect {
    * @returns {SqlResult} SQL result with EXISTS clause
    */
   handleAnyIlike(
+    operator: Operator,
     column: string,
     value: string,
     context: CompilerContext,
@@ -126,8 +127,10 @@ export class PostgresDialect extends BaseDialect {
     const paramKey = this.getParamKey(context.paramIndex);
     context.paramIndex++;
 
+    const existsOp = operator === 'any_ilike' ? 'EXISTS' : 'NOT EXISTS';
+
     return {
-      sql: `EXISTS (SELECT 1 FROM unnest(${column}) AS x WHERE x ILIKE ${placeholder})`,
+      sql: `${existsOp} (SELECT 1 FROM unnest(${column}) AS x WHERE x ILIKE ${placeholder})`,
       params: { [paramKey]: value },
     };
   }

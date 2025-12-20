@@ -133,9 +133,12 @@ export class SchemaValidator {
       this.validateConstraints(fieldName, field.constraints, value);
     }
 
-    // Skip type validation for any_of/not_any_of on array fields
+    // Skip type validation for any_of/any_ilike on array fields
     // These operators check a single value against an array column
-    if (['any_of', 'not_any_of'].includes(operator) && field.type === 'array') {
+    if (
+      ['any_of', 'not_any_of', 'any_ilike', 'not_any_ilike'].includes(operator) &&
+      field.type === 'array'
+    ) {
       return value;
     }
 

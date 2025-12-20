@@ -182,6 +182,7 @@ export type Operator =
   | 'any_of'      // value = ANY(column) - check if value is in array column
   | 'not_any_of'  // value <> ALL(column) - check if value is NOT in array column
   | 'any_ilike'   // EXISTS (SELECT 1 FROM unnest(column) AS x WHERE x ILIKE value) - ILIKE search in varchar[]/text[]
+  | 'not_any_ilike' // NOT EXISTS (SELECT 1 FROM unnest(column) AS x WHERE x ILIKE value)
   // String
   | 'like'
   | 'ilike'

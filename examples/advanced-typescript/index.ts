@@ -105,6 +105,14 @@ const schema: FilterSchema = {
       selectable: true,
       sortable: true,
     },
+    tags: {
+      type: 'array',
+      title: 'Tags',
+      inputType: 'text',
+      operators: ['any_of', 'any_ilike', 'overlaps'],
+      column: '_tags',
+      selectable: true,
+    },
   },
   settings: {
     maxDepth: 5,
@@ -371,6 +379,22 @@ LIMIT 100;
 
 console.log('\nFull Business Query:');
 console.log(businessQuery);
+
+// ============================================
+// Example 7: Array Operators (any_ilike)
+// ============================================
+console.log('\n═══════════════════════════════════════════════════════');
+console.log('Example 7: Array Operators (any_ilike)');
+console.log('═══════════════════════════════════════════════════════\n');
+
+const arrayRule: JsonLogicRule = {
+  any_ilike: [{ var: 'tags' }, '%typescript%'],
+};
+
+const arrayResult = compiler.compile(arrayRule);
+console.log('Query with any_ilike on array:');
+console.log('SQL:', arrayResult.sql);
+console.log('Params:', arrayResult.params);
 
 console.log('\n✅ All advanced examples completed!');
 

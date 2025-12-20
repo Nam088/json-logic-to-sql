@@ -41,6 +41,7 @@ export const OPERATOR_TO_SQL: Record<Operator, string> = {
   any_of: '= ANY',
   not_any_of: '<> ALL',
   any_ilike: 'EXISTS', // Handled by dialect.handleAnyIlike()
+  not_any_ilike: 'NOT EXISTS', // Handled by dialect.handleAnyIlike()
   like: 'LIKE',
   ilike: 'ILIKE',
   starts_with: 'LIKE',
