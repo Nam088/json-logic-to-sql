@@ -1,3 +1,10 @@
+# [1.9.0](https://github.com/Nam088/json-logic-to-sql/compare/v1.8.0...v1.9.0) (2025-12-20)
+
+
+### Features
+
+* Add `not_any_ilike` operator and update `any_ilike` handling to support its negation. ([ca5abfe](https://github.com/Nam088/json-logic-to-sql/commit/ca5abfe0ad805cf4728272942280ae564d37c83e))
+
 # [1.8.0](https://github.com/Nam088/json-logic-to-sql/compare/v1.7.0...v1.8.0) (2025-12-20)
 
 
