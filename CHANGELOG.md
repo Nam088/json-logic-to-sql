@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/Nam088/json-logic-to-sql/compare/v1.7.0...v1.8.0) (2025-12-20)
+
+
+### Features
+
+* Add `title` and `inputType` to schema fields and introduce `any_ilike` operator. ([019ae74](https://github.com/Nam088/json-logic-to-sql/commit/019ae74cd3d1462d0f306fe8de8c82dc650b1f7e))
+
 # [1.7.0](https://github.com/Nam088/json-logic-to-sql/compare/v1.6.0...v1.7.0) (2025-12-17)
 
 
