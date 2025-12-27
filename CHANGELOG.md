@@ -1,3 +1,10 @@
+# [1.10.0](https://github.com/Nam088/json-logic-to-sql/compare/v1.9.0...v1.10.0) (2025-12-27)
+
+
+### Features
+
+* add schema filtering utilities and distinguish public from internal field schema properties ([9e19ab1](https://github.com/Nam088/json-logic-to-sql/commit/9e19ab1d57f40230f524a0797aec41c098151843))
+
 # [1.9.0](https://github.com/Nam088/json-logic-to-sql/compare/v1.8.0...v1.9.0) (2025-12-20)
 
 
