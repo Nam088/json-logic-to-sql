@@ -42,3 +42,4 @@ export {
   toPublicSchema,
 } from './utils/schema-mapping';
 export type { ColumnMapping, JsonPathMapping, ExpressionMapping, FieldMappingConfig } from './utils/schema-mapping';
+export { getPublicSchema, DEFAULT_INTERNAL_FIELDS } from './utils/schema-filter';

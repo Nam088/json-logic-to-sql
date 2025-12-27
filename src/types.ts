@@ -104,37 +104,45 @@ export interface SchemaSettings {
 export interface FieldSchema {
   type: FieldType;
   operators: Operator[];
-  
+
   /** Display title for the field (used in UI) */
   title: string;
-  
+
   /** Input type for UI rendering */
   inputType: string;
-  
+
   /** DB column name if different from field name */
   column?: string;
-  
+
   /** Permissions */
   filterable?: boolean;
   selectable?: boolean;
   sortable?: boolean;
-  
+
   /** Validation */
   nullable?: boolean;
   options?: OptionConfig;
   constraints?: FieldConstraints;
-  
+
   /** SQL transforms */
   transform?: FieldTransform;
-  
+
   /** JSONB path for nested access */
   jsonPath?: string;
-  
+
   /** Case sensitivity for string comparisons */
   caseSensitive?: boolean;
-  
-  /** Extension point */
-  meta?: Record<string, unknown>;
+
+  /**
+   * Configuration exposed to the frontend/UI
+   * e.g. placeholder, tooltip, options, etc.
+   */
+  config?: Record<string, unknown>;
+
+  /**
+   * Internal backend configuration (hidden from frontend)
+   */
+  internal?: Record<string, unknown>;
 }
 
 export interface ComputedFieldSchema extends Omit<FieldSchema, 'column'> {
@@ -257,20 +265,20 @@ export interface FieldConstraints {
   minLength?: number;
   maxLength?: number;
   pattern?: RegExp | string;
-  
+
   // Number
   min?: number;
   max?: number;
-  
+
   // Array
   minItems?: number;
   maxItems?: number;
-  
+
   // Date/Datetime
   dateFormat?: DateFormat | RegExp | string;
   minDate?: string | Date;
   maxDate?: string | Date;
-  
+
   // Custom
   validate?: (value: unknown) => boolean | string;
 }
