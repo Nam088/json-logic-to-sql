@@ -20,14 +20,14 @@ export class SchemaValidationError extends Error {
 }
 
 export class SchemaValidator {
-  constructor(private schema: FilterSchema) {}
+  constructor(private schema: FilterSchema) { }
 
   /**
    * Get field schema, throws if not found or not filterable
    */
   getFieldSchema(fieldName: string): FieldSchema | ComputedFieldSchema {
     const field = this.schema.fields[fieldName];
-    
+
     if (!field) {
       if (this.schema.settings?.strict !== false) {
         throw new SchemaValidationError(
@@ -57,7 +57,7 @@ export class SchemaValidator {
    */
   validateOperator(fieldName: string, operator: Operator): void {
     const field = this.getFieldSchema(fieldName);
-    
+
     if (!field.operators.includes(operator)) {
       throw new SchemaValidationError(
         `Operator '${operator}' not allowed for field '${fieldName}'. ` +
@@ -77,7 +77,7 @@ export class SchemaValidator {
     value: unknown,
   ): unknown {
     const field = this.getFieldSchema(fieldName);
-    
+
     // For array operators (in, not_in), validate each item
     if (['in', 'not_in'].includes(operator) && Array.isArray(value)) {
       for (const item of value) {
@@ -85,7 +85,7 @@ export class SchemaValidator {
       }
       return value;
     }
-    
+
     // For range operators (between, not_between), validate array with 2 elements
     if (['between', 'not_between'].includes(operator) && Array.isArray(value)) {
       if (value.length !== 2) {
@@ -101,7 +101,7 @@ export class SchemaValidator {
       }
       return value;
     }
-    
+
     return this.validateSingleValue(fieldName, field, operator, value);
   }
 
@@ -133,10 +133,10 @@ export class SchemaValidator {
       this.validateConstraints(fieldName, field.constraints, value);
     }
 
-    // Skip type validation for any_of/any_ilike on array fields
+    // Skip type validation for any_of/any_ilike/in/not_in on array fields
     // These operators check a single value against an array column
     if (
-      ['any_of', 'not_any_of', 'any_ilike', 'not_any_ilike'].includes(operator) &&
+      ['any_of', 'not_any_of', 'any_ilike', 'not_any_ilike', 'in', 'not_in'].includes(operator) &&
       field.type === 'array'
     ) {
       return value;
@@ -158,7 +158,7 @@ export class SchemaValidator {
     if (options.items) {
       const values = Array.isArray(value) ? value : [value];
       const allowedValues = options.items.map((item) => item.value);
-      
+
       for (const v of values) {
         if (!allowedValues.includes(v as string | number)) {
           throw new SchemaValidationError(
@@ -191,8 +191,8 @@ export class SchemaValidator {
         );
       }
       if (constraints.pattern) {
-        const regex = typeof constraints.pattern === 'string' 
-          ? new RegExp(constraints.pattern) 
+        const regex = typeof constraints.pattern === 'string'
+          ? new RegExp(constraints.pattern)
           : constraints.pattern;
         if (!regex.test(value)) {
           throw new SchemaValidationError(
@@ -295,20 +295,20 @@ export class SchemaValidator {
       'iso': /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d{3})?(Z|[+-]\d{2}:\d{2})?)?$/,
       'date-only': /^\d{4}-\d{2}-\d{2}$/,
       'datetime': /^\d{4}-\d{2}-\d{2}([ T]\d{2}:\d{2}(:\d{2})?)?/,
-      
+
       // YYYY formats
       'YYYY-MM-DD': /^\d{4}-\d{2}-\d{2}$/,
       'YYYY/MM/DD': /^\d{4}\/\d{2}\/\d{2}$/,
-      
+
       // DD formats
       'DD-MM-YYYY': /^\d{2}-\d{2}-\d{4}$/,
       'DD/MM/YYYY': /^\d{2}\/\d{2}\/\d{4}$/,
       'DD.MM.YYYY': /^\d{2}\.\d{2}\.\d{4}$/,
-      
+
       // MM formats
       'MM-DD-YYYY': /^\d{2}-\d{2}-\d{4}$/,
       'MM/DD/YYYY': /^\d{2}\/\d{2}\/\d{4}$/,
-      
+
       // Time formats
       'HH:mm': /^\d{2}:\d{2}$/,
       'HH:mm:ss': /^\d{2}:\d{2}:\d{2}$/,
@@ -370,8 +370,8 @@ export class SchemaValidator {
         return value;
 
       case 'uuid':
-        if (typeof value !== 'string' || 
-            !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)) {
+        if (typeof value !== 'string' ||
+          !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)) {
           throw new SchemaValidationError(
             `Expected UUID for field: ${fieldName}`,
             fieldName,
