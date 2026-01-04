@@ -1,3 +1,10 @@
+# [1.11.0](https://github.com/Nam088/json-logic-to-sql/compare/v1.10.0...v1.11.0) (2026-01-04)
+
+
+### Features
+
+* Implement and test compilation of array operators like `in`, `not_in`, and `any_of` for PostgreSQL array and jsonb field types. ([c11deb4](https://github.com/Nam088/json-logic-to-sql/commit/c11deb44fefc6aeb239e16a7d598ea4b43bff34d))
+
 # [1.10.0](https://github.com/Nam088/json-logic-to-sql/compare/v1.9.0...v1.10.0) (2025-12-27)
 
 
