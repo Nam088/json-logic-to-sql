@@ -69,6 +69,19 @@ export class PostgresDialect extends BaseDialect {
     value: unknown,
     context: CompilerContext,
   ): SqlResult {
+    // For PostgreSQL native arrays, if value is array, use overlaps (&&)
+    if (context.fieldType === 'array' && Array.isArray(value)) {
+      const result = this.handleOverlaps(column, value, context);
+
+      if (operator === 'not_any_of') {
+        return {
+          sql: `NOT (${result.sql})`,
+          params: result.params,
+        };
+      }
+      return result;
+    }
+
     const placeholder = this.getParamPlaceholder(context.paramIndex);
     const paramKey = this.getParamKey(context.paramIndex);
     context.paramIndex++;
@@ -100,7 +113,9 @@ export class PostgresDialect extends BaseDialect {
       };
     }
 
-    // For PostgreSQL native arrays, use ANY/ALL
+
+
+    // For PostgreSQL native arrays (scalar value), use ANY/ALL
     const sqlOp = operator === 'any_of' ? '= ANY' : '<> ALL';
     return {
       sql: `${placeholder} ${sqlOp}(${column})`,

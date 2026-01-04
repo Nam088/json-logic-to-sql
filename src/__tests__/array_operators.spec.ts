@@ -57,6 +57,14 @@ describe('Array Operators', () => {
             expect(result.paramsArray).toEqual([['uuid-1', 'uuid-2']]);
         });
 
+        it('should compile "any_of" with array value to "&&" (overlaps) for array field', () => {
+            const rule = { any_of: [{ var: 'tags' }, ['uuid-1', 'uuid-2']] };
+            const result = compiler.compile(rule);
+
+            expect(result.sql).toBe('"_tags" && $1');
+            expect(result.paramsArray).toEqual([['uuid-1', 'uuid-2']]);
+        });
+
         it('should compile "in" to "EXISTS" logic for jsonb field (delegated to overlaps)', () => {
             // Logic for overlaps on JSONB
             // depends on implementation of handleOverlaps for JSONB in postgresql dialect
