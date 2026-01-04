@@ -1,3 +1,10 @@
+# [1.12.0](https://github.com/Nam088/json-logic-to-sql/compare/v1.11.0...v1.12.0) (2026-01-04)
+
+
+### Features
+
+* Implement `any_of` and `not_any_of` for PostgreSQL native array fields using the `&&` (overlaps) operator. ([3067335](https://github.com/Nam088/json-logic-to-sql/commit/3067335fd944b7d9707c342275c76eb3359a09d4))
+
 # [1.11.0](https://github.com/Nam088/json-logic-to-sql/compare/v1.10.0...v1.11.0) (2026-01-04)
 
 
