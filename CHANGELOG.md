@@ -1,3 +1,10 @@
+# [1.15.0](https://github.com/Nam088/json-logic-to-sql/compare/v1.14.0...v1.15.0) (2026-01-06)
+
+
+### Features
+
+* expose items in schema and add localization support ([ca1d2c1](https://github.com/Nam088/json-logic-to-sql/commit/ca1d2c119acc5c631d6494d44e633b289edd0289))
+
 # [1.14.0](https://github.com/Nam088/json-logic-to-sql/compare/v1.13.0...v1.14.0) (2026-01-06)
 
 
