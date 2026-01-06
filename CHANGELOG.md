@@ -1,3 +1,10 @@
+# [1.13.0](https://github.com/Nam088/json-logic-to-sql/compare/v1.12.0...v1.13.0) (2026-01-06)
+
+
+### Features
+
+* support itemType validation, add items to schema filter and implement fuzzy search for any_ilike ([5f1c4de](https://github.com/Nam088/json-logic-to-sql/commit/5f1c4decc4f99555a404d670c29e3330ed959af5))
+
 # [1.12.0](https://github.com/Nam088/json-logic-to-sql/compare/v1.11.0...v1.12.0) (2026-01-04)
 
 
