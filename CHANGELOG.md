@@ -1,3 +1,10 @@
+# [1.14.0](https://github.com/Nam088/json-logic-to-sql/compare/v1.13.0...v1.14.0) (2026-01-06)
+
+
+### Features
+
+* Add `labelCode` and `labelGroup` to `FieldSchema` and extend array operator validation to support `overlaps`, `contains`, and `contained_by`. ([ba98be7](https://github.com/Nam088/json-logic-to-sql/commit/ba98be7fa55d26023a6430f1c1cc666baa7924ca))
+
 # [1.13.0](https://github.com/Nam088/json-logic-to-sql/compare/v1.12.0...v1.13.0) (2026-01-06)
 
 
