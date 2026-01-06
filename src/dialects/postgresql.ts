@@ -143,10 +143,11 @@ export class PostgresDialect extends BaseDialect {
     context.paramIndex++;
 
     const existsOp = operator === 'any_ilike' ? 'EXISTS' : 'NOT EXISTS';
+    const paramValue = `%${this.escapeLike(value)}%`;
 
     return {
       sql: `${existsOp} (SELECT 1 FROM unnest(${column}) AS x WHERE x ILIKE ${placeholder})`,
-      params: { [paramKey]: value },
+      params: { [paramKey]: paramValue },
     };
   }
 

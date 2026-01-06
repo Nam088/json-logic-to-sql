@@ -143,6 +143,11 @@ export interface FieldSchema {
    * Internal backend configuration (hidden from frontend)
    */
   internal?: Record<string, unknown>;
+
+  /**
+   * For array types, defines the schema of items
+   */
+  items?: Partial<FieldSchema>;
 }
 
 export interface ComputedFieldSchema extends Omit<FieldSchema, 'column'> {

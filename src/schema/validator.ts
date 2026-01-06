@@ -139,11 +139,23 @@ export class SchemaValidator {
       ['any_of', 'not_any_of', 'any_ilike', 'not_any_ilike', 'in', 'not_in'].includes(operator) &&
       field.type === 'array'
     ) {
+      // If schema defines items type, we should validate the value against it
+      if (field.items?.type) {
+        // If value is array (e.g. any_of with array value), validate each item
+        if (Array.isArray(value)) {
+          for (const item of value) {
+            this.validateType(fieldName, field.items.type, item);
+          }
+        } else {
+          // Single value comparison
+          this.validateType(fieldName, field.items.type, value);
+        }
+      }
       return value;
     }
 
     // Type-specific validation
-    return this.validateType(fieldName, field.type, value);
+    return this.validateType(fieldName, field.type, value, field.items);
   }
 
   private validateOptions(
@@ -331,6 +343,7 @@ export class SchemaValidator {
     fieldName: string,
     type: string,
     value: unknown,
+    itemsSchema?: Partial<FieldSchema>,
   ): unknown {
     switch (type) {
       case 'string':
@@ -407,6 +420,12 @@ export class SchemaValidator {
             `Expected array for field: ${fieldName}`,
             fieldName,
           );
+        }
+        // Validate items if schema defined
+        if (itemsSchema?.type) {
+          for (const item of value) {
+            this.validateType(fieldName, itemsSchema.type, item);
+          }
         }
         return value;
 
