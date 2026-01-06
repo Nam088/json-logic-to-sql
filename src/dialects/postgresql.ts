@@ -135,15 +135,42 @@ export class PostgresDialect extends BaseDialect {
   handleAnyIlike(
     operator: Operator,
     column: string,
-    value: string,
+    value: string | string[],
     context: CompilerContext,
   ): SqlResult {
+    const existsOp = operator === 'any_ilike' ? 'EXISTS' : 'NOT EXISTS';
+
+    if (Array.isArray(value)) {
+      if (value.length === 0) {
+        return {
+          sql: operator === 'any_ilike' ? '1=0' : '1=1', // No patterns match nothing
+          params: {}
+        };
+      }
+
+      const placeholders: string[] = [];
+      const params: Record<string, unknown> = {};
+
+      value.forEach(v => {
+        const ph = this.getParamPlaceholder(context.paramIndex);
+        const key = this.getParamKey(context.paramIndex);
+        context.paramIndex++;
+        placeholders.push(ph);
+        params[key] = `%${this.escapeLike(v)}%`;
+      });
+
+      const arrayLiteral = `ARRAY[${placeholders.join(', ')}]`;
+      return {
+        sql: `${existsOp} (SELECT 1 FROM unnest(${column}) AS x WHERE x ILIKE ANY(${arrayLiteral}))`,
+        params
+      };
+    }
+
     const placeholder = this.getParamPlaceholder(context.paramIndex);
     const paramKey = this.getParamKey(context.paramIndex);
     context.paramIndex++;
 
-    const existsOp = operator === 'any_ilike' ? 'EXISTS' : 'NOT EXISTS';
-    const paramValue = `%${this.escapeLike(value)}%`;
+    const paramValue = `%${this.escapeLike(value as string)}%`;
 
     return {
       sql: `${existsOp} (SELECT 1 FROM unnest(${column}) AS x WHERE x ILIKE ${placeholder})`,
