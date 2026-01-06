@@ -133,21 +133,26 @@ export class SchemaValidator {
       this.validateConstraints(fieldName, field.constraints, value);
     }
 
-    // Skip type validation for any_of/any_ilike/in/not_in on array fields
-    // These operators check a single value against an array column
+    // Skip type validation for specific array operators
+    // These operators check values against an array column
     if (
-      ['any_of', 'not_any_of', 'any_ilike', 'not_any_ilike', 'in', 'not_in'].includes(operator) &&
+      ['any_of', 'not_any_of', 'any_ilike', 'not_any_ilike', 'in', 'not_in', 'overlaps'].includes(operator) &&
       field.type === 'array'
     ) {
+      // Auto-wrap scalar value to array for set operators: overlaps, contains, contained_by
+      if (['overlaps', 'contains', 'contained_by'].includes(operator) && !Array.isArray(value)) {
+        value = [value];
+      }
+
       // If schema defines items type, we should validate the value against it
       if (field.items?.type) {
-        // If value is array (e.g. any_of with array value), validate each item
+        // If value is array (e.g. overlaps/any_of with array value), validate each item
         if (Array.isArray(value)) {
           for (const item of value) {
             this.validateType(fieldName, field.items.type, item);
           }
         } else {
-          // Single value comparison
+          // Single value comparison (e.g. any_ilike)
           this.validateType(fieldName, field.items.type, value);
         }
       }

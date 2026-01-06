@@ -108,6 +108,12 @@ export interface FieldSchema {
   /** Display title for the field (used in UI) */
   title: string;
 
+  /** Localization key for the field label */
+  labelCode?: string;
+
+  /** Localization group (namespace) for the field label */
+  labelGroup?: string;
+
   /** Input type for UI rendering */
   inputType: string;
 
