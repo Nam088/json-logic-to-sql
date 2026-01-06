@@ -1,3 +1,10 @@
+## [1.15.1](https://github.com/Nam088/json-logic-to-sql/compare/v1.15.0...v1.15.1) (2026-01-06)
+
+
+### Bug Fixes
+
+* update any_ilike to support array patterns for fuzzy search ([ea428f7](https://github.com/Nam088/json-logic-to-sql/commit/ea428f79ba0053ed490567401a791d4b14b8215b))
+
 # [1.15.0](https://github.com/Nam088/json-logic-to-sql/compare/v1.14.0...v1.15.0) (2026-01-06)
 
 
