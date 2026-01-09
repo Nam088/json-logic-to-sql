@@ -19,7 +19,7 @@ export function applyBuiltinTransform(column: string, fn: string, dialect?: stri
       return `LTRIM(${column})`;
     case 'rtrim':
       return `RTRIM(${column})`;
-    
+
     // Dialect-specific transforms
     case 'unaccent':
       // Only PostgreSQL supports unaccent (requires extension)
@@ -27,11 +27,11 @@ export function applyBuiltinTransform(column: string, fn: string, dialect?: stri
         return `unaccent(${column})`;
       }
       throw new Error(`Transform 'unaccent' is only supported in PostgreSQL`);
-    
+
     case 'date':
       // Most databases support DATE(), but syntax may vary
       return `DATE(${column})`;
-    
+
     case 'year':
       // MySQL uses YEAR() instead of EXTRACT(YEAR FROM ...)
       if (dialect === 'mysql') {
@@ -39,7 +39,7 @@ export function applyBuiltinTransform(column: string, fn: string, dialect?: stri
       }
       // PostgreSQL, SQLite, MSSQL use EXTRACT
       return `EXTRACT(YEAR FROM ${column})`;
-    
+
     case 'month':
       // MySQL uses MONTH() instead of EXTRACT(MONTH FROM ...)
       if (dialect === 'mysql') {
@@ -47,7 +47,7 @@ export function applyBuiltinTransform(column: string, fn: string, dialect?: stri
       }
       // PostgreSQL, SQLite, MSSQL use EXTRACT
       return `EXTRACT(MONTH FROM ${column})`;
-    
+
     case 'day':
       // MySQL uses DAY() instead of EXTRACT(DAY FROM ...)
       if (dialect === 'mysql') {
@@ -55,7 +55,7 @@ export function applyBuiltinTransform(column: string, fn: string, dialect?: stri
       }
       // PostgreSQL, SQLite, MSSQL use EXTRACT
       return `EXTRACT(DAY FROM ${column})`;
-    
+
     default:
       return column;
   }
@@ -65,6 +65,11 @@ export function applyBuiltinTransform(column: string, fn: string, dialect?: stri
  * Apply built-in JavaScript transforms to a parameter value
  */
 export function applyValueTransform(value: unknown, fn: string): unknown {
+  switch (fn) {
+    case 'toArray':
+      return Array.isArray(value) ? value : [value];
+  }
+
   if (typeof value !== 'string') {
     return value;
   }

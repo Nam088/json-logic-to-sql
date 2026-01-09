@@ -131,7 +131,7 @@ export const DEFAULT_INTERNAL_FIELDS = [
     'computed',
     'transform',
     'internal',
-    'internal',
+    'items',
 ];
 
 /**
