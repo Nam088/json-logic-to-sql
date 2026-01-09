@@ -329,6 +329,7 @@ export type TransformFn =
   | 'year'
   | 'month'
   | 'day'
+  | 'toArray'
   | CustomTransform;
 
 export interface CustomTransform {
