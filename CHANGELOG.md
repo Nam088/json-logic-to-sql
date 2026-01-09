@@ -1,3 +1,10 @@
+# [1.16.0](https://github.com/Nam088/json-logic-to-sql/compare/v1.15.1...v1.16.0) (2026-01-09)
+
+
+### Features
+
+* support transform array ([411b5cd](https://github.com/Nam088/json-logic-to-sql/commit/411b5cd5f8282a4c765985cb4e23ea9eaba87707))
+
 ## [1.15.1](https://github.com/Nam088/json-logic-to-sql/compare/v1.15.0...v1.15.1) (2026-01-06)
 
 
