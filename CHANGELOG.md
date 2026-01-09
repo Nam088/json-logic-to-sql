@@ -1,3 +1,10 @@
+## [1.16.1](https://github.com/Nam088/json-logic-to-sql/compare/v1.16.0...v1.16.1) (2026-01-09)
+
+
+### Bug Fixes
+
+* missing type ([3a727d0](https://github.com/Nam088/json-logic-to-sql/commit/3a727d0c704458e731a092871d31c8935b2705b5))
+
 # [1.16.0](https://github.com/Nam088/json-logic-to-sql/compare/v1.15.1...v1.16.0) (2026-01-09)
 
 
